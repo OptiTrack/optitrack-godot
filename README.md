@@ -8,13 +8,13 @@ OptiTrack plugin for the game engine Godot.
 
 In order to the install the Plugin:
 
-1. Download the latest version of Blender.
+1. Download the latest version of Godot.
 2. [Include Instructions Here]
 
 
 ## How to Start Developing
 
-In order to start developing on the Blender plugin it is helpful to be working with the latest code base hosted on GitHub. To do this:
+In order to start developing on the Godot plugin it is helpful to be working with the latest code base hosted on GitHub. To do this:
 
 1. Download the latest version of Godot.
 2. [Include Instructions Here]
