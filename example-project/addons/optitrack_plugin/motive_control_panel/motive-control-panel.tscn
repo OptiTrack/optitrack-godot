@@ -1,0 +1,111 @@
+[gd_scene load_steps=5 format=3 uid="uid://d287c1lsjykib"]
+
+[ext_resource type="Script" uid="uid://bl8sij7ifdnm5" path="res://addons/optitrack_plugin/motive_control_panel/connect_button.gd" id="1_d4j6b"]
+[ext_resource type="Script" uid="uid://bq4wagrsier6y" path="res://addons/optitrack_plugin/motive_control_panel/disconnect_button.gd" id="2_vb82j"]
+[ext_resource type="Script" uid="uid://btngevgiqaclf" path="res://addons/optitrack_plugin/motive_control_panel/timeline_play_button.gd" id="3_vqh52"]
+[ext_resource type="Script" uid="uid://cik6fhwfy5jb5" path="res://addons/optitrack_plugin/motive_control_panel/timeline_stop_button.gd" id="4_cvv63"]
+
+[node name="Motive" type="ScrollContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -852.0
+offset_bottom = -198.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Motive"
+horizontal_alignment = 1
+
+[node name="Settings" type="FoldableContainer" parent="VBoxContainer"]
+layout_mode = 2
+title = "Settings"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Settings"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/Settings/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="ServerIPLabel" type="Label" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Server IP:"
+
+[node name="ServerIPLineEdit" type="LineEdit" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ClientIPLabel2" type="Label" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Client IP:"
+
+[node name="ClientIPLineEdit2" type="LineEdit" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/Settings/VBoxContainer"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+text = "In Motive, set transmission to Multicast"
+autowrap_mode = 3
+
+[node name="Connection" type="FoldableContainer" parent="VBoxContainer"]
+layout_mode = 2
+title = "Connection"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Connection"]
+layout_mode = 2
+
+[node name="ConnectButton" type="Button" parent="VBoxContainer/Connection/VBoxContainer"]
+layout_mode = 2
+text = "Start Connection"
+script = ExtResource("1_d4j6b")
+
+[node name="DisconnectButton" type="Button" parent="VBoxContainer/Connection/VBoxContainer"]
+layout_mode = 2
+text = "Stop Connection"
+script = ExtResource("2_vb82j")
+
+[node name="Label" type="Label" parent="VBoxContainer/Connection/VBoxContainer"]
+layout_mode = 2
+text = "Motive Assets:"
+
+[node name="AssetList" type="ItemList" parent="VBoxContainer/Connection/VBoxContainer"]
+layout_mode = 2
+
+[node name="TimelinePlayButton" type="Button" parent="VBoxContainer/Connection/VBoxContainer"]
+layout_mode = 2
+text = "Timeline Play"
+script = ExtResource("3_vqh52")
+
+[node name="TimelineStopButton" type="Button" parent="VBoxContainer/Connection/VBoxContainer"]
+layout_mode = 2
+text = "Timeline Stop"
+script = ExtResource("4_cvv63")
+
+[node name="Info" type="FoldableContainer" parent="VBoxContainer"]
+layout_mode = 2
+title = "Info"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Info"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/Info/VBoxContainer"]
+layout_mode = 2
+text = "OptiTrack Documentation"
+
+[node name="LinkButton" type="LinkButton" parent="VBoxContainer/Info/VBoxContainer"]
+layout_mode = 2
+text = "OptiTrack Plugin for Godot"
+
+[node name="LinkButton2" type="LinkButton" parent="VBoxContainer/Info/VBoxContainer"]
+layout_mode = 2
+text = "Motive"
