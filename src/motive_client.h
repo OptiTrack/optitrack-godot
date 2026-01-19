@@ -16,25 +16,41 @@ protected:
 	static void _bind_methods();
 
 	bool connected;
+	bool print_get_data_error;
 	NatNetClient* client;
     sNatNetClientConnectParams params;
 	sFrameOfMocapData* frame;
 	sDataDescriptions* data_descriptions;
 
+	String client_address;
+	
+	Dictionary rigid_body_assets;
 
 public:
 	MotiveClient();
 	~MotiveClient();
 
-	void print_config() const;
+	void _enter_tree() override;
+	void _exit_tree() override;
+
+	bool is_connected();
+
+	void print_config();
     void connect_to_motive();
     void disconnect_from_motive();
     void timeline_play();
 	void timeline_stop();
+
 	void set_server_addr(String);
 	String get_server_addr() const;
+	void set_client_address(String);
+	String get_client_address() const;
 
-	void get_data_descriptions();
+	Dictionary get_connection_settings();
+	void configure_connection_settings(Dictionary);
+
+	Dictionary get_rigid_body_assets();
+
 	Vector3 get_rigid_body_pos(int);
 	Quaternion get_rigid_body_rot(int);
 

@@ -1,8 +1,10 @@
 #include "motive_client.h"
 #include "NatNet/NatNetCAPI.h"
+#include <godot_cpp/classes/engine.hpp>
 
 
-
+// This function registers the class's methods with the Godot engine so that 
+// they can be accessed in GDScript
 void MotiveClient::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("print_config"), &MotiveClient::print_config);
 	godot::ClassDB::bind_method(D_METHOD("connect_to_motive"), &MotiveClient::connect_to_motive);
@@ -12,19 +14,32 @@ void MotiveClient::_bind_methods() {
 
 	godot::ClassDB::bind_method(D_METHOD("get_server_addr"), &MotiveClient::get_server_addr);
 	godot::ClassDB::bind_method(D_METHOD("set_server_addr", "p_server_addr"), &MotiveClient::set_server_addr);
+	godot::ClassDB::bind_method(D_METHOD("get_client_address"), &MotiveClient::get_client_address);
+	godot::ClassDB::bind_method(D_METHOD("set_client_address", "p_client_address"), &MotiveClient::set_client_address);
 
-	godot::ClassDB::bind_method(D_METHOD("get_data_descriptions"), &MotiveClient::get_data_descriptions);
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "server_addr"), "set_server_addr", "get_server_addr");
+	ADD_PROPERTY(PropertyInfo(Variant::STRING, "client_address"), "set_client_address", "get_client_address");
+
+	godot::ClassDB::bind_method(D_METHOD("get_connection_settings"), &MotiveClient::get_connection_settings);
+	godot::ClassDB::bind_method(D_METHOD("configure_connection_settings", "settings"), &MotiveClient::configure_connection_settings);
+
+	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_assets"), &MotiveClient::get_rigid_body_assets);
+	
 	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_pos", "index"), &MotiveClient::get_rigid_body_pos);
 	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_rot", "index"), &MotiveClient::get_rigid_body_rot);
 
-	//ADD_PROPERTY(PropertyInfo(Variant::STRING, "server_addr"), "set_server_addr", "get_server_addr");
+
 }
 
 
+// Constructor
 MotiveClient::MotiveClient() {
 	client = new NatNetClient();
 	frame = NULL;
+	data_descriptions = NULL;
 	connected = false;
+
+	// Default connnection parameters
 	params.localAddress = "127.0.0.1";
 	params.serverAddress = "127.0.0.1";
 	params.connectionType = ConnectionType_Multicast;
@@ -33,6 +48,7 @@ MotiveClient::MotiveClient() {
 }
 
 
+// Destructor
 MotiveClient::~MotiveClient() {
 	if (client) {
 		client->Disconnect();
@@ -45,8 +61,26 @@ MotiveClient::~MotiveClient() {
 }
 
 
+// Automatically connect when the MotiveClient Node enters the scene tree
+void MotiveClient::_enter_tree() {
+	connect_to_motive();
+}
 
-void MotiveClient::print_config() const {
+
+// Automatically disconnect when the MotiveClient Node leaves the scene tree
+void MotiveClient::_exit_tree() {
+	disconnect_from_motive();
+}
+
+
+// Get connection status
+bool MotiveClient::is_connected(){
+	return connected;
+}
+
+
+// Prints the connection configuration
+void MotiveClient::print_config() {
 	print_line("Motive Client Connection Parameters");
 	print_line("Local Address: ", params.localAddress);
 	print_line("Server Address: ", params.serverAddress);
@@ -57,6 +91,7 @@ void MotiveClient::print_config() const {
 }
 
 
+// Attempts to establish a connection with Motive
 void MotiveClient::connect_to_motive() {
 	if (connected) {
 		print_line("Already connected to Motive");
@@ -81,16 +116,19 @@ void MotiveClient::disconnect_from_motive() {
 		if (result == ErrorCode_OK) {
 			print_line("Disconnected from Motive");
 			connected = false;
-		}	
+		}
+		else {
+			print_line("Error disconnecting from Motive");
+		}
 	}
 	else {
 		print_line("No connection to disconnect");
 	}
-	
 }
 
 
-
+// Sends a the Timeline Play command to the connected Motive server
+// Causes the currently loaded take to start/resume playback in Motive
 void MotiveClient::timeline_play() {
 	void* response;
 	int bytes;
@@ -98,6 +136,8 @@ void MotiveClient::timeline_play() {
 }
 
 
+// Sends a the Timeline Stop command to the connected Motive server
+// Causes the currently loaded take to pause playback in Motive
 void MotiveClient::timeline_stop() {
 	void* response;
 	int bytes;
@@ -106,36 +146,115 @@ void MotiveClient::timeline_stop() {
 
 
 void MotiveClient::set_server_addr(String p_server_addr) {
-	params.serverAddress = "127.0.0.1";
+	if (p_server_addr.is_valid_ip_address()) {
+		params.serverAddress = p_server_addr.ascii().get_data();
+	}
+	print_line(String(params.serverAddress));
 }
 
 
 String MotiveClient::get_server_addr() const {
-	return params.serverAddress;
+	return String(params.serverAddress);
 }
 
 
+void MotiveClient::set_client_address(String p_client_address) {
+	if (p_client_address.is_valid_ip_address()) {
+		client_address = p_client_address;
+		print_line(client_address);
+	}
+}
 
-void MotiveClient::get_data_descriptions() {
-	client->GetDataDescriptionList(&data_descriptions);
-
+String MotiveClient::get_client_address() const {
+	return client_address;
 }
 
 
+// Returns a godot dictionary containing the NatNetClient configuration parameters
+Dictionary MotiveClient::get_connection_settings() {
+	Dictionary settings;
+	settings.set("Server IP Address", String(params.serverAddress));
+	settings.set("Client IP Address", String(params.localAddress));
+	settings.set("Multicast", params.connectionType == ConnectionType_Multicast);
+	return settings;
+}
+
+
+// Sets the connection parameters to match the settings provided in a godot
+// Dictionary, such as one returned by MotiveClient::get_connection_settings()
+// keys and values should be as follows:
+// key: "Server IP Address", value: String containing the server IP address
+// key: "Client IP Address", value: String containing the client IP address
+// key: "Multicast", value: true for Multicast connection, false for Unicast
+void MotiveClient::configure_connection_settings(Dictionary settings) {
+	String server_address = settings["Server IP Address"];
+	params.serverAddress = server_address.ascii().get_data();
+	String client_address = settings["Client IP Address"];
+	params.localAddress = client_address.ascii().get_data();
+	if (settings["Multicast"]) {
+		params.connectionType = ConnectionType_Multicast;
+	}
+	else {
+		params.connectionType = ConnectionType_Unicast;
+	}
+}
+
+
+// Returns a godot Dictionary of the rigid body assets 
+// returns a dictionary where the keys and the values are as follows:
+// key (int): streaming ID, value (String): "[asset ID]: [asset name]"
+// If the call to GetDataDescriptionList fails (e.g., the client is not connected)
+// returns a Dictionary with one key/value pair (0, "Check Motive connection")
+Dictionary MotiveClient::get_rigid_body_assets() {
+	ErrorCode result = client->GetDataDescriptionList(&data_descriptions);
+
+	rigid_body_assets.clear();
+	
+	if (result != ErrorCode_OK) {
+		rigid_body_assets.set(0, "Check Motive connection");
+		return rigid_body_assets;
+	}
+	else {
+		for (int i = 0; i < data_descriptions->nDataDescriptions; i++) {
+			if (data_descriptions->arrDataDescriptions[i].type == Descriptor_RigidBody) {
+				sRigidBodyDescription* pRB = data_descriptions->arrDataDescriptions[i].Data.RigidBodyDescription;
+				String asset_ID_and_name = String::num_int64(pRB->ID) + String(": ") + String(pRB->szName);
+				int enitityID, streamingID;
+				NatNet_DecodeID(pRB->ID, &enitityID, &streamingID);
+				rigid_body_assets.set(streamingID, asset_ID_and_name);
+			}
+		}
+		return rigid_body_assets;
+	}
+}
+
+
+// Returns a godot Vector3 containing the position data from the latest frame
+// of MoCap data for the rigid body with the streaming ID index.
+// If no frame data is available (e.g., a connection has not been esatblished yet)
+// returns the zero vector.  Prints an error message once.
 Vector3 MotiveClient::get_rigid_body_pos(int index) {
 	if (frame != NULL && index < frame->nRigidBodies) {
+		print_get_data_error = true;
 		return Vector3(frame->RigidBodies[index].x, 
 		               frame->RigidBodies[index].y,
 					   frame->RigidBodies[index].z
 		);
 	}
 	else {
-		print_line("problem retrieving position data");
+		if (print_get_data_error) {
+			print_line("Couldn't retrieve rigid body data. Check connection to Motive");
+			print_get_data_error = false;
+		}
 		return Vector3(0,0,0);
 	}
 }
 
 
+// Returns a godot Quaternion containing the rotation data from the latest frame
+// of MoCap data for the rigid body with the streaming ID index.
+// If no frame data is available (e.g., a connection has not been esatblished yet)
+// returns the identity quaternion.  Prints an error message once.
 Quaternion MotiveClient::get_rigid_body_rot(int index) {
 	if (frame != NULL && index < frame->nRigidBodies) {
 		return Quaternion(frame->RigidBodies[index].qx, 
@@ -145,11 +264,13 @@ Quaternion MotiveClient::get_rigid_body_rot(int index) {
 		);
 	}
 	else {
-		print_line("problem retrieving rotation data");
 		return Quaternion(0,0,0,1);
 	}
 }
 
+
+// Called every time a new frame of MoCap data is received.
+// Saves the data in MotiveClient::frame
 void NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData) {
 
 	MotiveClient* pMotiveClient = (MotiveClient*) pUserData;
