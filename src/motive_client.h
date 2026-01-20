@@ -17,12 +17,14 @@ protected:
 
 	bool connected;
 	bool print_get_data_error;
+
 	NatNetClient* client;
     sNatNetClientConnectParams params;
+	CharString server_address;
+	CharString client_address;
+
 	sFrameOfMocapData* frame;
 	sDataDescriptions* data_descriptions;
-
-	String client_address;
 	
 	Dictionary rigid_body_assets;
 
@@ -41,10 +43,12 @@ public:
     void timeline_play();
 	void timeline_stop();
 
-	void set_server_addr(String);
-	String get_server_addr() const;
+	void set_server_address(String);
+	String get_server_address() const;
 	void set_client_address(String);
 	String get_client_address() const;
+	void set_multicast(bool);
+	bool get_multicast();
 
 	Dictionary get_connection_settings();
 	void configure_connection_settings(Dictionary);

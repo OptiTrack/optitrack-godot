@@ -12,13 +12,12 @@ void MotiveClient::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("timeline_play"), &MotiveClient::timeline_play);
 	godot::ClassDB::bind_method(D_METHOD("timeline_stop"), &MotiveClient::timeline_stop);
 
-	godot::ClassDB::bind_method(D_METHOD("get_server_addr"), &MotiveClient::get_server_addr);
-	godot::ClassDB::bind_method(D_METHOD("set_server_addr", "p_server_addr"), &MotiveClient::set_server_addr);
+	godot::ClassDB::bind_method(D_METHOD("get_server_address"), &MotiveClient::get_server_address);
+	godot::ClassDB::bind_method(D_METHOD("set_server_address", "p_server_address"), &MotiveClient::set_server_address);
 	godot::ClassDB::bind_method(D_METHOD("get_client_address"), &MotiveClient::get_client_address);
 	godot::ClassDB::bind_method(D_METHOD("set_client_address", "p_client_address"), &MotiveClient::set_client_address);
-
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "server_addr"), "set_server_addr", "get_server_addr");
-	ADD_PROPERTY(PropertyInfo(Variant::STRING, "client_address"), "set_client_address", "get_client_address");
+	godot::ClassDB::bind_method(D_METHOD("get_multicast"), &MotiveClient::get_multicast);
+	godot::ClassDB::bind_method(D_METHOD("set_multicast", "multicast"), &MotiveClient::set_multicast);
 
 	godot::ClassDB::bind_method(D_METHOD("get_connection_settings"), &MotiveClient::get_connection_settings);
 	godot::ClassDB::bind_method(D_METHOD("configure_connection_settings", "settings"), &MotiveClient::configure_connection_settings);
@@ -145,28 +144,83 @@ void MotiveClient::timeline_stop() {
 }
 
 
-void MotiveClient::set_server_addr(String p_server_addr) {
-	if (p_server_addr.is_valid_ip_address()) {
-		params.serverAddress = p_server_addr.ascii().get_data();
+// Configures the Motive server address.
+// Only changes the server address if the string is a valif IP address
+// If changed, ends any current connection to Motive
+void MotiveClient::set_server_address(String p_server_address) {
+	if (p_server_address.is_valid_ip_address()) {
+		server_address = p_server_address.ascii();
+		params.serverAddress = server_address.get_data();
+
+		if (connected) {
+			ErrorCode result = client->Disconnect();
+			if (result == ErrorCode_OK) {
+				print_line("Disconnected from Motive");
+				connected = false;
+			}
+		}
 	}
-	print_line(String(params.serverAddress));
+	else {
+		print_line("Not valid IP address. Server address not updated.");
+	}
 }
 
 
-String MotiveClient::get_server_addr() const {
+String MotiveClient::get_server_address() const {
 	return String(params.serverAddress);
 }
 
 
+// Configures the local IP address.
+// Only changes the local address if the string is a valif IP address
+// If changed, ends any current connection to Motive
 void MotiveClient::set_client_address(String p_client_address) {
 	if (p_client_address.is_valid_ip_address()) {
-		client_address = p_client_address;
-		print_line(client_address);
+		client_address = p_client_address.ascii();
+		params.localAddress = client_address.get_data();
+
+		if (connected) {
+			ErrorCode result = client->Disconnect();
+			if (result == ErrorCode_OK) {
+				print_line("Disconnected from Motive");
+				connected = false;
+			}
+		}
+	}
+	else {
+		print_line("Not valid IP address. Client address not updated.");
 	}
 }
 
 String MotiveClient::get_client_address() const {
-	return client_address;
+	return String(params.localAddress);
+}
+
+
+void MotiveClient::set_multicast(bool multicast) {
+	if (multicast) {
+		params.connectionType = ConnectionType_Multicast;
+		if (connected) {
+			ErrorCode result = client->Disconnect();
+			if (result == ErrorCode_OK) {
+				print_line("Disconnected from Motive");
+				connected = false;
+			}
+		}
+	}
+	else {
+		params.connectionType = ConnectionType_Unicast;
+	}
+}
+
+
+bool MotiveClient::get_multicast() {
+	if (params.connectionType == ConnectionType_Multicast) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }
 
 
