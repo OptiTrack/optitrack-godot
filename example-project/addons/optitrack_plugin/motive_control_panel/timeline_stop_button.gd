@@ -3,7 +3,10 @@ extends Button
 
 
 func _pressed() -> void:
-	Motive.timeline_stop()
+	pass
+	#Motive.timeline_stop()
+	MotiveAutoload.timeline_stop()
+	#MotiveClientSingleton.timeline_stop()
 
 
 # Called when the node enters the scene tree for the first time.

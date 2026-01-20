@@ -1,9 +1,20 @@
-[gd_scene load_steps=5 format=3 uid="uid://d287c1lsjykib"]
+[gd_scene load_steps=10 format=3 uid="uid://d287c1lsjykib"]
 
 [ext_resource type="Script" uid="uid://bl8sij7ifdnm5" path="res://addons/optitrack_plugin/motive_control_panel/connect_button.gd" id="1_d4j6b"]
+[ext_resource type="Script" uid="uid://c85irf3qpj2br" path="res://addons/optitrack_plugin/motive_control_panel/server_ip_line_edit.gd" id="1_vqh52"]
+[ext_resource type="Script" uid="uid://c7wcuhw8cus17" path="res://addons/optitrack_plugin/motive_control_panel/client_ip_line_edit.gd" id="2_cvv63"]
 [ext_resource type="Script" uid="uid://bq4wagrsier6y" path="res://addons/optitrack_plugin/motive_control_panel/disconnect_button.gd" id="2_vb82j"]
+[ext_resource type="Script" uid="uid://gtlopin7lmh1" path="res://addons/optitrack_plugin/motive_control_panel/multicast_check_button.gd" id="3_gx5iy"]
+[ext_resource type="Script" uid="uid://bckufh50qov21" path="res://addons/optitrack_plugin/motive_control_panel/refresh_asset_list_button.gd" id="3_vb82j"]
 [ext_resource type="Script" uid="uid://btngevgiqaclf" path="res://addons/optitrack_plugin/motive_control_panel/timeline_play_button.gd" id="3_vqh52"]
 [ext_resource type="Script" uid="uid://cik6fhwfy5jb5" path="res://addons/optitrack_plugin/motive_control_panel/timeline_stop_button.gd" id="4_cvv63"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gx5iy"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.21176471, 0.23921569, 0.2901961, 1)
 
 [node name="Motive" type="ScrollContainer"]
 anchors_preset = 15
@@ -42,20 +53,31 @@ text = "Server IP:"
 [node name="ServerIPLineEdit" type="LineEdit" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "127.0.0.1"
+script = ExtResource("1_vqh52")
 
-[node name="ClientIPLabel2" type="Label" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
+[node name="ClientIPLabel" type="Label" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
 layout_mode = 2
 text = "Client IP:"
 
-[node name="ClientIPLineEdit2" type="LineEdit" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
+[node name="ClientIPLineEdit" type="LineEdit" parent="VBoxContainer/Settings/VBoxContainer/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+text = "127.0.0.1"
+script = ExtResource("2_cvv63")
 
 [node name="Label" type="Label" parent="VBoxContainer/Settings/VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 text = "In Motive, set transmission to Multicast"
 autowrap_mode = 3
+
+[node name="MulticastCheckBox" type="CheckBox" parent="VBoxContainer/Settings/VBoxContainer"]
+layout_mode = 2
+button_pressed = true
+text = "Multicast"
+script = ExtResource("3_gx5iy")
 
 [node name="Connection" type="FoldableContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -74,12 +96,25 @@ layout_mode = 2
 text = "Stop Connection"
 script = ExtResource("2_vb82j")
 
-[node name="Label" type="Label" parent="VBoxContainer/Connection/VBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Connection/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gx5iy")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Connection/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "Motive Assets:"
 
-[node name="AssetList" type="ItemList" parent="VBoxContainer/Connection/VBoxContainer"]
+[node name="AssetList" type="ItemList" parent="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
+auto_height = true
+
+[node name="RefreshAssetListButton" type="Button" parent="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Refreseh Asset List"
+script = ExtResource("3_vb82j")
 
 [node name="TimelinePlayButton" type="Button" parent="VBoxContainer/Connection/VBoxContainer"]
 layout_mode = 2
@@ -109,3 +144,6 @@ text = "OptiTrack Plugin for Godot"
 [node name="LinkButton2" type="LinkButton" parent="VBoxContainer/Info/VBoxContainer"]
 layout_mode = 2
 text = "Motive"
+
+[connection signal="editing_toggled" from="VBoxContainer/Settings/VBoxContainer/GridContainer/ServerIPLineEdit" to="VBoxContainer/Settings/VBoxContainer/GridContainer/ServerIPLineEdit" method="_on_editing_toggled"]
+[connection signal="editing_toggled" from="VBoxContainer/Settings/VBoxContainer/GridContainer/ClientIPLineEdit" to="VBoxContainer/Settings/VBoxContainer/GridContainer/ClientIPLineEdit" method="_on_editing_toggled"]
