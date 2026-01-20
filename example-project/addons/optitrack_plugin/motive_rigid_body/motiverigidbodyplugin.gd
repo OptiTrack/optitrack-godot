@@ -2,16 +2,6 @@
 extends EditorPlugin
 
 
-func _enable_plugin() -> void:
-	# Add autoloads here.
-	pass
-
-
-func _disable_plugin() -> void:
-	# Remove autoloads here.
-	pass
-
-
 func _enter_tree() -> void:
 	# Initialization of the plugin goes here.
 	# Add the new type with a name, a parent type, a script and an icon.
@@ -21,3 +11,13 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	# Clean-up of the plugin goes here.
 	remove_custom_type("MotiveRigidBody")
+
+
+func _enable_plugin() -> void:
+	# Add autoloads here.
+	pass
+
+
+func _disable_plugin() -> void:
+	# Remove autoloads here.
+	pass
