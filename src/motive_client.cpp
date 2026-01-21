@@ -19,15 +19,10 @@ void MotiveClient::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("get_multicast"), &MotiveClient::get_multicast);
 	godot::ClassDB::bind_method(D_METHOD("set_multicast", "multicast"), &MotiveClient::set_multicast);
 
-	godot::ClassDB::bind_method(D_METHOD("get_connection_settings"), &MotiveClient::get_connection_settings);
-	godot::ClassDB::bind_method(D_METHOD("configure_connection_settings", "settings"), &MotiveClient::configure_connection_settings);
-
 	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_assets"), &MotiveClient::get_rigid_body_assets);
 	
 	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_pos", "index"), &MotiveClient::get_rigid_body_pos);
 	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_rot", "index"), &MotiveClient::get_rigid_body_rot);
-
-
 }
 
 
@@ -57,18 +52,6 @@ MotiveClient::~MotiveClient() {
 		NatNet_FreeFrame(frame);
 		delete frame;
 	}
-}
-
-
-// Automatically connect when the MotiveClient Node enters the scene tree
-void MotiveClient::_enter_tree() {
-	connect_to_motive();
-}
-
-
-// Automatically disconnect when the MotiveClient Node leaves the scene tree
-void MotiveClient::_exit_tree() {
-	disconnect_from_motive();
 }
 
 
@@ -220,36 +203,6 @@ bool MotiveClient::get_multicast() {
 	}
 	else {
 		return false;
-	}
-}
-
-
-// Returns a godot dictionary containing the NatNetClient configuration parameters
-Dictionary MotiveClient::get_connection_settings() {
-	Dictionary settings;
-	settings.set("Server IP Address", String(params.serverAddress));
-	settings.set("Client IP Address", String(params.localAddress));
-	settings.set("Multicast", params.connectionType == ConnectionType_Multicast);
-	return settings;
-}
-
-
-// Sets the connection parameters to match the settings provided in a godot
-// Dictionary, such as one returned by MotiveClient::get_connection_settings()
-// keys and values should be as follows:
-// key: "Server IP Address", value: String containing the server IP address
-// key: "Client IP Address", value: String containing the client IP address
-// key: "Multicast", value: true for Multicast connection, false for Unicast
-void MotiveClient::configure_connection_settings(Dictionary settings) {
-	String server_address = settings["Server IP Address"];
-	params.serverAddress = server_address.ascii().get_data();
-	String client_address = settings["Client IP Address"];
-	params.localAddress = client_address.ascii().get_data();
-	if (settings["Multicast"]) {
-		params.connectionType = ConnectionType_Multicast;
-	}
-	else {
-		params.connectionType = ConnectionType_Unicast;
 	}
 }
 

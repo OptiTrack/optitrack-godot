@@ -32,9 +32,6 @@ public:
 	MotiveClient();
 	~MotiveClient();
 
-	void _enter_tree() override;
-	void _exit_tree() override;
-
 	bool is_connected();
 
 	void print_config();
@@ -49,9 +46,6 @@ public:
 	String get_client_address() const;
 	void set_multicast(bool);
 	bool get_multicast();
-
-	Dictionary get_connection_settings();
-	void configure_connection_settings(Dictionary);
 
 	Dictionary get_rigid_body_assets();
 
