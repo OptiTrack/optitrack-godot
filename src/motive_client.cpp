@@ -137,6 +137,10 @@ void MotiveClient::timeline_stop() {
 // Only changes the server address if the string is a valid IP address
 // If changed, ends any current connection to Motive
 void MotiveClient::set_server_address(String p_server_address) {
+	if (p_server_address == String(params.serverAddress)) {
+		return;
+	}
+	
 	if (p_server_address.is_valid_ip_address()) {
 		server_address = p_server_address.ascii();
 		params.serverAddress = server_address.get_data();
@@ -166,6 +170,10 @@ String MotiveClient::get_server_address() const {
 // Only changes the local address if the string is a valid IP address
 // If changed, ends any current connection to Motive
 void MotiveClient::set_client_address(String p_client_address) {
+	if (p_client_address == String(params.localAddress)){
+		return;
+	}
+
 	if (p_client_address.is_valid_ip_address()) {
 		client_address = p_client_address.ascii();
 		params.localAddress = client_address.get_data();
@@ -193,8 +201,15 @@ String MotiveClient::get_client_address() const {
 
 // Configures the connection settings to use multicast or unicast
 void MotiveClient::set_multicast(bool multicast) {
+	ConnectionType new_connection_type;
 	if (multicast) {
-		params.connectionType = ConnectionType_Multicast;
+		new_connection_type = ConnectionType_Multicast;
+	}
+	else {
+		new_connection_type = ConnectionType_Unicast;
+	}
+	if (new_connection_type != params.connectionType) {
+		params.connectionType = new_connection_type;
 		if (connected) {
 			ErrorCode result = client->Disconnect();
 			if (result == ErrorCode_OK) {
@@ -202,9 +217,6 @@ void MotiveClient::set_multicast(bool multicast) {
 				connected = false;
 			}
 		}
-	}
-	else {
-		params.connectionType = ConnectionType_Unicast;
 	}
 }
 
