@@ -1,3 +1,7 @@
+//================================================
+// Copyright 2026, NaturalPoint Inc. DBA OptiTrack
+//================================================
+
 #include "motive_client.h"
 #include "NatNet/NatNetCAPI.h"
 #include <godot_cpp/classes/engine.hpp>
@@ -93,6 +97,7 @@ void MotiveClient::connect_to_motive() {
 }
 
 
+// If connected to Motive, ends the connection
 void MotiveClient::disconnect_from_motive() {
 	if (connected) {
 		ErrorCode result = client->Disconnect();
@@ -129,7 +134,7 @@ void MotiveClient::timeline_stop() {
 
 
 // Configures the Motive server address.
-// Only changes the server address if the string is a valif IP address
+// Only changes the server address if the string is a valid IP address
 // If changed, ends any current connection to Motive
 void MotiveClient::set_server_address(String p_server_address) {
 	if (p_server_address.is_valid_ip_address()) {
@@ -150,13 +155,15 @@ void MotiveClient::set_server_address(String p_server_address) {
 }
 
 
+// Returns a godot::String of the server IP address as configured in the
+// connection parameters
 String MotiveClient::get_server_address() const {
 	return String(params.serverAddress);
 }
 
 
 // Configures the local IP address.
-// Only changes the local address if the string is a valif IP address
+// Only changes the local address if the string is a valid IP address
 // If changed, ends any current connection to Motive
 void MotiveClient::set_client_address(String p_client_address) {
 	if (p_client_address.is_valid_ip_address()) {
@@ -176,11 +183,15 @@ void MotiveClient::set_client_address(String p_client_address) {
 	}
 }
 
+
+// Returns a godot::String of the client (local) IP address as configured in the
+// connection parameters
 String MotiveClient::get_client_address() const {
 	return String(params.localAddress);
 }
 
 
+// Configures the connection settings to use multicast or unicast
 void MotiveClient::set_multicast(bool multicast) {
 	if (multicast) {
 		params.connectionType = ConnectionType_Multicast;
@@ -198,6 +209,8 @@ void MotiveClient::set_multicast(bool multicast) {
 }
 
 
+// Returns true if the connection parameters are configured for multicast
+// Returns false if configured for unicast
 bool MotiveClient::get_multicast() {
 	if (params.connectionType == ConnectionType_Multicast) {
 		return true;
