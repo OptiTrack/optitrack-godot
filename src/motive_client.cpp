@@ -6,6 +6,7 @@
 // This function registers the class's methods with the Godot engine so that 
 // they can be accessed in GDScript
 void MotiveClient::_bind_methods() {
+	godot::ClassDB::bind_method(D_METHOD("is_connected_to_motive"), &MotiveClient::is_connected_to_motive);
 	godot::ClassDB::bind_method(D_METHOD("print_config"), &MotiveClient::print_config);
 	godot::ClassDB::bind_method(D_METHOD("connect_to_motive"), &MotiveClient::connect_to_motive);
 	godot::ClassDB::bind_method(D_METHOD("disconnect_from_motive"), &MotiveClient::disconnect_from_motive);
@@ -56,7 +57,7 @@ MotiveClient::~MotiveClient() {
 
 
 // Get connection status
-bool MotiveClient::is_connected(){
+bool MotiveClient::is_connected_to_motive(){
 	return connected;
 }
 

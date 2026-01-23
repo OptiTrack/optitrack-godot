@@ -32,7 +32,7 @@ public:
 	MotiveClient();
 	~MotiveClient();
 
-	bool is_connected();
+	bool is_connected_to_motive();
 
 	void print_config();
     void connect_to_motive();
