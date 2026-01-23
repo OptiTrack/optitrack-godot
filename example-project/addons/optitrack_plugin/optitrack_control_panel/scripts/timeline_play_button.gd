@@ -3,4 +3,4 @@ extends Button
 
 
 func _pressed() -> void:
-	MotiveAutoload.connect_to_motive()
+	OptiTrack.timeline_play()

@@ -5,6 +5,7 @@ extends EditorProperty
 var container = VBoxContainer.new()
 var property_control = OptionButton.new()
 var refresh_button = Button.new()
+var refresh_icon = preload("refresh.png")
 
 # internal variable for current value
 var current_value = 0
@@ -16,6 +17,8 @@ func _init() -> void:
 	# set up dropdown menu and refresh button
 	refresh_asset_list()
 	refresh_button.text = "Refresh Asset List"
+	refresh_button.icon = refresh_icon
+	refresh_button.expand_icon = true
 	refresh_button.pressed.connect(_on_refresh_button_pressed)
 	
 	# add control elements to vertical box container
@@ -51,7 +54,11 @@ func _on_refresh_button_pressed() -> void:
 
 
 func refresh_asset_list() -> void:
-	var asset_dict = MotiveAutoload.get_rigid_body_assets()
+	var asset_dict
+	if EditorInterface.is_plugin_enabled("optitrack_plugin"):
+		asset_dict = OptiTrack.get_rigid_body_assets()
+	else:
+		asset_dict = {0 : "Check Motive connection"}
 	property_control.clear()
 	for streaming_ID in asset_dict:
 		property_control.add_item(asset_dict[streaming_ID], streaming_ID)

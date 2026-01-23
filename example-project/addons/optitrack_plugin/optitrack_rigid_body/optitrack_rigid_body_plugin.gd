@@ -5,12 +5,12 @@ extends EditorPlugin
 func _enter_tree() -> void:
 	# Initialization of the plugin goes here.
 	# Add the new type with a name, a parent type, a script and an icon.
-	add_custom_type("MotiveRigidBody", "Node3D", preload("res://addons/optitrack_plugin/motive_rigid_body/motiverigidbody.gd"), preload("res://addons/optitrack_plugin/motive_rigid_body/motive-icon.png"))
+	add_custom_type("OptiTrackRigidBody", "Node3D", preload("optitrack_rigid_body.gd"), preload("motive-icon.png"))
 
 
 func _exit_tree() -> void:
 	# Clean-up of the plugin goes here.
-	remove_custom_type("MotiveRigidBody")
+	remove_custom_type("OptiTrackRigidBody")
 
 
 func _enable_plugin() -> void:
