@@ -12,7 +12,6 @@ func _ready() -> void:
 	add_title_bar_control(icon)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _exit_tree() -> void:
 	remove_title_bar_control(icon)
 
@@ -24,9 +23,22 @@ func update_connection_icon() -> void:
 		icon.texture = disconnected_icon
 
 
+# Update the connection status icon when connecting or disconnection
 func _on_connect_button_motive_connect() -> void:
 	update_connection_icon()
 
-
 func _on_disconnect_button_motive_disconnect() -> void:
+	update_connection_icon()
+
+# Update the connection status icon when settings are modified
+# because changing the settings can cause disconnection
+func _on_server_ip_line_edit_editing_toggled(toggled_on: bool) -> void:
+	if not toggled_on:
+		update_connection_icon()
+
+func _on_client_ip_line_edit_editing_toggled(toggled_on: bool) -> void:
+	if not toggled_on:
+		update_connection_icon()
+
+func _on_multicast_check_box_toggled(toggled_on: bool) -> void:
 	update_connection_icon()

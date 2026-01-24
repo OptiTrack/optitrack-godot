@@ -154,6 +154,9 @@ layout_mode = 2
 text = "version 1.0"
 
 [connection signal="editing_toggled" from="VBoxContainer/Settings/VBoxContainer/GridContainer/ServerIPLineEdit" to="VBoxContainer/Settings/VBoxContainer/GridContainer/ServerIPLineEdit" method="_on_editing_toggled"]
+[connection signal="editing_toggled" from="VBoxContainer/Settings/VBoxContainer/GridContainer/ServerIPLineEdit" to="VBoxContainer/Connection" method="_on_server_ip_line_edit_editing_toggled"]
 [connection signal="editing_toggled" from="VBoxContainer/Settings/VBoxContainer/GridContainer/ClientIPLineEdit" to="VBoxContainer/Settings/VBoxContainer/GridContainer/ClientIPLineEdit" method="_on_editing_toggled"]
+[connection signal="editing_toggled" from="VBoxContainer/Settings/VBoxContainer/GridContainer/ClientIPLineEdit" to="VBoxContainer/Connection" method="_on_client_ip_line_edit_editing_toggled"]
+[connection signal="toggled" from="VBoxContainer/Settings/VBoxContainer/MulticastCheckBox" to="VBoxContainer/Connection" method="_on_multicast_check_box_toggled"]
 [connection signal="motive_connect" from="VBoxContainer/Connection/VBoxContainer/ConnectButton" to="VBoxContainer/Connection" method="_on_connect_button_motive_connect"]
 [connection signal="motive_disconnect" from="VBoxContainer/Connection/VBoxContainer/DisconnectButton" to="VBoxContainer/Connection" method="_on_disconnect_button_motive_disconnect"]
