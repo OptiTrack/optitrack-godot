@@ -49,14 +49,15 @@ suffix = env['suffix'].replace(".dev", "").replace(".universal", "")
 
 lib_filename = "{}{}{}{}".format(env.subst('$SHLIBPREFIX'), libname, suffix, env.subst('$SHLIBSUFFIX'))
 
+# put compiled binaries in bin/
 library = env.SharedLibrary(
-    "bin/optitrack_plugin/{}/{}".format(env['platform'], lib_filename),
+    "bin/{}".format(lib_filename),
     source=sources,
 )
 
 
 # copy .dll files etc. into addons/ folder
-copy = env.Install("{}/addons/optitrack_plugin/{}/".format(projectdir, env["platform"]), library)
+copy = env.Install("{}/addons/optitrack_plugin/{}/".format(projectdir, "bin"), library)
 
 default_args = [library, copy]
 Default(*default_args)
