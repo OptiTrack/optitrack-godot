@@ -1,0 +1,28 @@
+[gd_scene load_steps=4 format=3 uid="uid://biv80cjvholgs"]
+
+[ext_resource type="Script" uid="uid://bjucqtaks5kya" path="res://addons/optitrack_plugin/optitrack_rigid_body/optitrack_rigid_body.gd" id="1_ig7tw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ig7tw"]
+albedo_color = Color(0, 0.31333002, 0.64424413, 1)
+
+[sub_resource type="TextMesh" id="TextMesh_0xm2m"]
+material = SubResource("StandardMaterial3D_ig7tw")
+text = "OptiTrack"
+font_size = 127
+depth = 0.25
+
+[node name="Main" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 0, 2, 7)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 4, 7)
+
+[node name="OptiTrackRigidBody" type="Node3D" parent="."]
+transform = Transform3D(0.9759156, 0.21801984, -0.007491002, -0.20684198, 0.91387695, -0.3493498, -0.06931934, 0.34248537, 0.9369624, -0.9936662, 0.8788106, -1.7418369)
+script = ExtResource("1_ig7tw")
+metadata/_custom_type_script = "uid://bjucqtaks5kya"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="OptiTrackRigidBody"]
+mesh = SubResource("TextMesh_0xm2m")
