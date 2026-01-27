@@ -12,10 +12,7 @@ func _ready() -> void:
 	add_title_bar_control(icon)
 
 
-func _exit_tree() -> void:
-	remove_title_bar_control(icon)
-
-
+# checks if connected to Motive and updates the connection indicator icon
 func update_connection_icon() -> void:
 	if OptiTrack.is_connected_to_motive():
 		icon.texture = connected_icon

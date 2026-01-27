@@ -6,9 +6,9 @@
 [ext_resource type="Script" uid="uid://bl8sij7ifdnm5" path="res://addons/optitrack_plugin/optitrack_control_panel/scripts/connect_button.gd" id="4_6luuk"]
 [ext_resource type="Script" uid="uid://2u8pvtywr01k" path="res://addons/optitrack_plugin/optitrack_control_panel/scripts/connection.gd" id="4_7akx8"]
 [ext_resource type="Script" uid="uid://bq4wagrsier6y" path="res://addons/optitrack_plugin/optitrack_control_panel/scripts/disconnect_button.gd" id="5_84pis"]
-[ext_resource type="Script" uid="uid://bckufh50qov21" path="res://addons/optitrack_plugin/optitrack_control_panel/scripts/refresh_asset_list_button.gd" id="6_h514a"]
 [ext_resource type="Texture2D" uid="uid://8u8mv53vo6vh" path="res://addons/optitrack_plugin/optitrack_control_panel/icons/refresh.png" id="6_x5hoe"]
 [ext_resource type="Script" uid="uid://btngevgiqaclf" path="res://addons/optitrack_plugin/optitrack_control_panel/scripts/timeline_play_button.gd" id="7_aerd7"]
+[ext_resource type="Script" uid="uid://dlv5sb5ccxt2v" path="res://addons/optitrack_plugin/optitrack_control_panel/asset_list.gd" id="7_se3h4"]
 [ext_resource type="Texture2D" uid="uid://ocyj1wvvp15l" path="res://addons/optitrack_plugin/optitrack_control_panel/icons/play.png" id="8_7akx8"]
 [ext_resource type="Script" uid="uid://cik6fhwfy5jb5" path="res://addons/optitrack_plugin/optitrack_control_panel/scripts/timeline_pause_button.gd" id="8_hrxmo"]
 [ext_resource type="Texture2D" uid="uid://c2okecura4tko" path="res://addons/optitrack_plugin/optitrack_control_panel/icons/pause.png" id="10_se3h4"]
@@ -115,13 +115,13 @@ text = "Motive Assets:"
 [node name="AssetList" type="ItemList" parent="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
 auto_height = true
+script = ExtResource("7_se3h4")
 
 [node name="RefreshAssetListButton" type="Button" parent="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "Refresh Asset List"
 icon = ExtResource("6_x5hoe")
 expand_icon = true
-script = ExtResource("6_h514a")
 
 [node name="TimelinePlayButton" type="Button" parent="VBoxContainer/Connection/VBoxContainer"]
 layout_mode = 2
@@ -159,4 +159,7 @@ text = "version 1.0"
 [connection signal="editing_toggled" from="VBoxContainer/Settings/VBoxContainer/GridContainer/ClientIPLineEdit" to="VBoxContainer/Connection" method="_on_client_ip_line_edit_editing_toggled"]
 [connection signal="toggled" from="VBoxContainer/Settings/VBoxContainer/MulticastCheckBox" to="VBoxContainer/Connection" method="_on_multicast_check_box_toggled"]
 [connection signal="motive_connect" from="VBoxContainer/Connection/VBoxContainer/ConnectButton" to="VBoxContainer/Connection" method="_on_connect_button_motive_connect"]
+[connection signal="motive_connect" from="VBoxContainer/Connection/VBoxContainer/ConnectButton" to="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer/AssetList" method="_on_connect_button_motive_connect"]
 [connection signal="motive_disconnect" from="VBoxContainer/Connection/VBoxContainer/DisconnectButton" to="VBoxContainer/Connection" method="_on_disconnect_button_motive_disconnect"]
+[connection signal="motive_disconnect" from="VBoxContainer/Connection/VBoxContainer/DisconnectButton" to="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer/AssetList" method="_on_disconnect_button_motive_disconnect"]
+[connection signal="pressed" from="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer/RefreshAssetListButton" to="VBoxContainer/Connection/VBoxContainer/PanelContainer/VBoxContainer/AssetList" method="_on_refresh_asset_list_button_pressed"]
