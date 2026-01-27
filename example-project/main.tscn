@@ -20,7 +20,6 @@ transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.965
 transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 4, 7)
 
 [node name="OptiTrackRigidBody" type="Node3D" parent="."]
-transform = Transform3D(0.9759156, 0.21801984, -0.007491002, -0.20684198, 0.91387695, -0.3493498, -0.06931934, 0.34248537, 0.9369624, -0.9936662, 0.8788106, -1.7418369)
 script = ExtResource("1_ig7tw")
 metadata/_custom_type_script = "uid://bjucqtaks5kya"
 
