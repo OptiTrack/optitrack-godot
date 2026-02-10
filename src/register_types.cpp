@@ -14,7 +14,10 @@ void initialize_gdextension_types(ModuleInitializationLevel p_level)
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	GDREGISTER_CLASS(MotiveClient);
+	// Registers the class publicly, but prevents automatic instantiation through ClassDB.
+	// Using GDREGISTER_VIRTUAL_CLASS instead of GDREGISTER_CLASS makes it so that
+	// the MotiveClient node type does not appear on the list when creating a new node
+	GDREGISTER_VIRTUAL_CLASS(MotiveClient);
 }
 
 void uninitialize_gdextension_types(ModuleInitializationLevel p_level) {

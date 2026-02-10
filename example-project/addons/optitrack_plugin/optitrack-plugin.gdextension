@@ -3,6 +3,9 @@
 entry_symbol = "motive_client_init"
 compatibility_minimum = "4.1"
 
+; reload the extension upon recompilation
+reloadable = true
+
 [libraries]
 ; Relative paths ensure that our GDExtension can be placed anywhere in the project directory.
 macos.single.debug = "./bin/libOptiTrack-plugin.macos.template_debug.dylib"
