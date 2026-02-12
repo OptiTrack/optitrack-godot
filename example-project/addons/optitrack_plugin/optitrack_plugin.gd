@@ -12,6 +12,8 @@ func _enable_plugin() -> void:
 	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_control_panel", true)
 	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_rigid_body", true)
 	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_rigid_body_inspector", true)
+	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_skeleton", true)
+	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_skeleton_inspector", true)
 
 
 func _disable_plugin() -> void:
@@ -19,6 +21,8 @@ func _disable_plugin() -> void:
 	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_control_panel", false)
 	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_rigid_body", false)
 	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_rigid_body_inspector", false)
+	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_skeleton", false)
+	EditorInterface.set_plugin_enabled(PLUGIN_FOLDER + "/optitrack_skeleton_inspector", false)
 	
 	# Remove autoloads here.
 	remove_autoload_singleton(AUTOLOAD_NAME)

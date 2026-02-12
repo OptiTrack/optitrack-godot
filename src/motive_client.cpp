@@ -28,6 +28,9 @@ void MotiveClient::_bind_methods() {
 	
 	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_pos", "index"), &MotiveClient::get_rigid_body_pos);
 	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_rot", "index"), &MotiveClient::get_rigid_body_rot);
+
+	godot::ClassDB::bind_method(D_METHOD("get_skeleton_assets"), &MotiveClient::get_skeleton_assets);
+	godot::ClassDB::bind_method(D_METHOD("get_skeleton_bone_data", "index"), &MotiveClient::get_skeleton_bone_data);
 }
 
 
@@ -298,6 +301,87 @@ Quaternion MotiveClient::get_rigid_body_rot(int index) {
 	}
 	else {
 		return Quaternion(0,0,0,1);
+	}
+}
+
+
+// Returns a list of skeleton assets
+Dictionary MotiveClient::get_skeleton_assets() {
+	ErrorCode result = client->GetDataDescriptionList(&data_descriptions);
+
+	skeleton_assets.clear();
+	
+	if (result != ErrorCode_OK) {
+		skeleton_assets.set(0, "Check Motive connection");
+		return skeleton_assets;
+	}
+	else {
+		for (int i = 0; i < data_descriptions->nDataDescriptions; i++) {
+			if (data_descriptions->arrDataDescriptions[i].type == Descriptor_Skeleton) {
+				sSkeletonDescription* pSkel = data_descriptions->arrDataDescriptions[i].Data.SkeletonDescription;
+				String asset_ID_and_name = String::num_int64(pSkel->skeletonID) + String(": ") + String(pSkel->szName);
+				
+				// Not sure if skeleton ID needs to/should be decoded like rigid bodies
+				int enitityID, streamingID;
+				NatNet_DecodeID(pSkel->skeletonID, &enitityID, &streamingID);
+				skeleton_assets.set(streamingID, asset_ID_and_name);
+			}
+		}
+		return skeleton_assets;
+	}
+}
+
+
+Dictionary MotiveClient::get_skeleton_bone_data(int index) {
+	ErrorCode result = client->GetDataDescriptionList(&data_descriptions);
+
+	sSkeletonDescription* skeleton_description = NULL;
+	String skeleton_name; // needed?
+	Dictionary bone_data;
+
+	// Find skeleton data description that matches index
+	for (int i = 0; i < data_descriptions->nDataDescriptions; i++) {
+		sDataDescription description = data_descriptions->arrDataDescriptions[i];
+		if (description.type == Descriptor_Skeleton
+			&& description.Data.SkeletonDescription->skeletonID == index) {
+			
+			skeleton_description = description.Data.SkeletonDescription;
+			skeleton_name = String(skeleton_description->szName);
+		}
+	}
+
+	// get position and rotation data from data frame
+	if (frame != NULL && index < frame->nSkeletons) {
+		sSkeletonData skeleton = frame->Skeletons[index];
+
+		for (int i = 0; i < skeleton.nRigidBodies; i++) {
+			Array data = Array();
+			data.resize(3);
+
+			String bone_name = skeleton_description->RigidBodies[i].szName;
+			int parentID = skeleton_description->RigidBodies[i].parentID;
+
+			//NatNet_DecodeID(skeleton.RigidBodyData[i].ID, &parentID, &boneID);
+			
+			Vector3 position = Vector3(skeleton.RigidBodyData[i].x,
+									   skeleton.RigidBodyData[i].y,
+									   skeleton.RigidBodyData[i].z);
+			Quaternion rotation = Quaternion(skeleton.RigidBodyData[i].qx,
+											 skeleton.RigidBodyData[i].qy,
+											 skeleton.RigidBodyData[i].qz,
+											 skeleton.RigidBodyData[i].qw);
+			data.set(0, parentID);
+			data.set(1, position);
+			data.set(2, rotation);
+			bone_data.set(bone_name, data);
+		}
+		return bone_data;
+	}
+	else {
+		print_line("Could not retrieve bone data. Check connection to Motive");
+
+		// return empty array
+		return bone_data;
 	}
 }
 

@@ -31,6 +31,7 @@ protected:
 	sDataDescriptions* data_descriptions;
 	
 	Dictionary rigid_body_assets;
+	Dictionary skeleton_assets;
 
 public:
 	MotiveClient();
@@ -56,6 +57,18 @@ public:
 	Vector3 get_rigid_body_pos(int);
 	Quaternion get_rigid_body_rot(int);
 
+	Dictionary get_skeleton_assets();
+	Dictionary get_skeleton_bone_data(int);
+
 	friend void NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData);    // receives data from the server
 	
+};
+
+
+class BoneData : public RefCounted {
+public:
+	int bone_id;
+	int parent_id;
+	Vector3 position;
+	Quaternion rotation;
 };

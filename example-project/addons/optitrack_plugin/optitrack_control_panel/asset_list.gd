@@ -8,7 +8,8 @@ func update_list() -> void:
 	clear()
 	
 	# get rigid body assets from MotiveClient
-	asset_dictionary = OptiTrack.get_rigid_body_assets()
+	asset_dictionary = OptiTrack.get_skeleton_assets()
+	asset_dictionary.merge(OptiTrack.get_rigid_body_assets())
 	
 	# add each rigid body asset to list
 	for id in asset_dictionary:
