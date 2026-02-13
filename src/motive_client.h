@@ -20,7 +20,8 @@ protected:
 	static void _bind_methods();
 
 	bool connected;
-	bool print_get_data_error;
+	bool rigid_body_data_error;
+	bool skeleton_data_error;
 
 	NatNetClient* client;
     sNatNetClientConnectParams params;
@@ -52,11 +53,12 @@ public:
 	void set_multicast(bool);
 	bool get_multicast();
 
+	int get_rigid_body_index(int);
 	Dictionary get_rigid_body_assets();
-
 	Vector3 get_rigid_body_pos(int);
 	Quaternion get_rigid_body_rot(int);
 
+	int get_skeleton_index(int);
 	Dictionary get_skeleton_assets();
 	Dictionary get_skeleton_bone_data(int);
 

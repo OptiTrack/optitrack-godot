@@ -24,13 +24,14 @@ void MotiveClient::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("get_multicast"), &MotiveClient::get_multicast);
 	godot::ClassDB::bind_method(D_METHOD("set_multicast", "multicast"), &MotiveClient::set_multicast);
 
+	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_index", "id"), &MotiveClient::get_rigid_body_index);
 	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_assets"), &MotiveClient::get_rigid_body_assets);
-	
-	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_pos", "index"), &MotiveClient::get_rigid_body_pos);
-	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_rot", "index"), &MotiveClient::get_rigid_body_rot);
+	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_pos", "id"), &MotiveClient::get_rigid_body_pos);
+	godot::ClassDB::bind_method(D_METHOD("get_rigid_body_rot", "id"), &MotiveClient::get_rigid_body_rot);
 
+	godot::ClassDB::bind_method(D_METHOD("get_skeleton_index", "id"), &MotiveClient::get_skeleton_index);
 	godot::ClassDB::bind_method(D_METHOD("get_skeleton_assets"), &MotiveClient::get_skeleton_assets);
-	godot::ClassDB::bind_method(D_METHOD("get_skeleton_bone_data", "index"), &MotiveClient::get_skeleton_bone_data);
+	godot::ClassDB::bind_method(D_METHOD("get_skeleton_bone_data", "id"), &MotiveClient::get_skeleton_bone_data);
 }
 
 
@@ -236,6 +237,24 @@ bool MotiveClient::get_multicast() {
 }
 
 
+
+// searches the last frame of data for the rigidbody array index matching the
+// skeleton id.  Returns -1 if no match is found.
+int MotiveClient::get_rigid_body_index(int id) {
+	int index = -1;
+
+	if (frame != NULL) {
+		for (int i = 0; i < frame->nRigidBodies; i++) {
+			if (frame->RigidBodies[i].ID == id){
+				index = i;
+			}
+		}
+	}
+
+	return index;
+}
+
+
 // Returns a godot Dictionary of the rigid body assets 
 // returns a dictionary where the keys and the values are as follows:
 // key (int): streaming ID, value (String): "[asset ID]: [asset name]"
@@ -247,7 +266,7 @@ Dictionary MotiveClient::get_rigid_body_assets() {
 	rigid_body_assets.clear();
 	
 	if (result != ErrorCode_OK) {
-		rigid_body_assets.set(0, "Check Motive connection");
+		rigid_body_assets.set(-1, "Check Motive connection");
 		return rigid_body_assets;
 	}
 	else {
@@ -267,20 +286,34 @@ Dictionary MotiveClient::get_rigid_body_assets() {
 
 // Returns a godot Vector3 containing the position data from the latest frame
 // of MoCap data for the rigid body with the streaming ID index.
-// If no frame data is available (e.g., a connection has not been esatblished yet)
+// If no frame data is available (e.g., a connection has not been established yet)
 // returns the zero vector.  Prints an error message once.
-Vector3 MotiveClient::get_rigid_body_pos(int index) {
-	if (frame != NULL && index < frame->nRigidBodies) {
-		print_get_data_error = true;
+Vector3 MotiveClient::get_rigid_body_pos(int id) {
+	// no frame data available
+	if (frame == NULL){
+		if (rigid_body_data_error == false) {
+			print_line("Couldn't retrieve rigid body data.");
+			rigid_body_data_error = true;
+		}
+		return Vector3(0,0,0);
+	}
+	
+	// find index that matches the rigid body id
+	int index = get_rigid_body_index(id);
+	
+	// return position data
+	if (index >= 0 && index < frame->nRigidBodies){
+		rigid_body_data_error = false;
 		return Vector3(frame->RigidBodies[index].x, 
 		               frame->RigidBodies[index].y,
 					   frame->RigidBodies[index].z
 		);
 	}
+	// bad index
 	else {
-		if (print_get_data_error) {
-			print_line("Couldn't retrieve rigid body data. Check connection to Motive");
-			print_get_data_error = false;
+		if (rigid_body_data_error == false) {
+			print_line("Couldn't retrieve rigid body data.");
+			rigid_body_data_error = true;
 		}
 		return Vector3(0,0,0);
 	}
@@ -291,28 +324,58 @@ Vector3 MotiveClient::get_rigid_body_pos(int index) {
 // of MoCap data for the rigid body with the streaming ID index.
 // If no frame data is available (e.g., a connection has not been esatblished yet)
 // returns the identity quaternion.  Prints an error message once.
-Quaternion MotiveClient::get_rigid_body_rot(int index) {
-	if (frame != NULL && index < frame->nRigidBodies) {
+Quaternion MotiveClient::get_rigid_body_rot(int id) {
+	// no frame data available
+	if (frame == NULL){
+		// print error message in get_rigid_body_pos
+		return Quaternion(0,0,0,1);
+	}
+
+	// find index that matches the rigid body id
+	int index = get_rigid_body_index(id);
+	
+	// return rotation data
+	if (index >= 0 && index < frame->nRigidBodies) {
 		return Quaternion(frame->RigidBodies[index].qx, 
 		               frame->RigidBodies[index].qy,
 					   frame->RigidBodies[index].qz,
 					   frame->RigidBodies[index].qw
 		);
 	}
+	// bad index
 	else {
 		return Quaternion(0,0,0,1);
 	}
 }
 
 
-// Returns a list of skeleton assets
+
+// searches the last frame of data for the skeleton array index matching the
+// skeleton id.  Returns -1 if no match is found.
+int MotiveClient::get_skeleton_index(int id) {
+	int index = -1;
+
+	if (frame != NULL) {
+		for (int i = 0; i < frame->nSkeletons; i++) {
+			if (frame->Skeletons[i].skeletonID == id) {
+				index = i;
+			}
+		}
+	}
+	return index;
+}
+
+
+// Returns a list of skeleton assets as a Dictionary
+// key: skeleton ID (int)
+// value: asset ID and name (string)
 Dictionary MotiveClient::get_skeleton_assets() {
 	ErrorCode result = client->GetDataDescriptionList(&data_descriptions);
 
 	skeleton_assets.clear();
 	
 	if (result != ErrorCode_OK) {
-		skeleton_assets.set(0, "Check Motive connection");
+		skeleton_assets.set(-1, "Check Motive connection");
 		return skeleton_assets;
 	}
 	else {
@@ -320,11 +383,8 @@ Dictionary MotiveClient::get_skeleton_assets() {
 			if (data_descriptions->arrDataDescriptions[i].type == Descriptor_Skeleton) {
 				sSkeletonDescription* pSkel = data_descriptions->arrDataDescriptions[i].Data.SkeletonDescription;
 				String asset_ID_and_name = String::num_int64(pSkel->skeletonID) + String(": ") + String(pSkel->szName);
-				
-				// Not sure if skeleton ID needs to/should be decoded like rigid bodies
-				int enitityID, streamingID;
-				NatNet_DecodeID(pSkel->skeletonID, &enitityID, &streamingID);
-				skeleton_assets.set(streamingID, asset_ID_and_name);
+
+				skeleton_assets.set(pSkel->skeletonID, asset_ID_and_name);
 			}
 		}
 		return skeleton_assets;
@@ -332,36 +392,63 @@ Dictionary MotiveClient::get_skeleton_assets() {
 }
 
 
-Dictionary MotiveClient::get_skeleton_bone_data(int index) {
-	ErrorCode result = client->GetDataDescriptionList(&data_descriptions);
+// Returns skeleton bone data for the skeleton matching id as a Dictionary
+// key: bone name (string)
+// value: array containing the following:
+// 	index 0: bone ID (int)
+//  index 1: parent bone ID (int)
+//  index 2: bone position (Vector3D)
+//  index 3: bone rotation (Quaternion)
+Dictionary MotiveClient::get_skeleton_bone_data(int id) {
+	//ErrorCode result = client->GetDataDescriptionList(&data_descriptions);
 
 	sSkeletonDescription* skeleton_description = NULL;
-	String skeleton_name; // needed?
 	Dictionary bone_data;
 
-	// Find skeleton data description that matches index
-	for (int i = 0; i < data_descriptions->nDataDescriptions; i++) {
-		sDataDescription description = data_descriptions->arrDataDescriptions[i];
-		if (description.type == Descriptor_Skeleton
-			&& description.Data.SkeletonDescription->skeletonID == index) {
-			
-			skeleton_description = description.Data.SkeletonDescription;
-			skeleton_name = String(skeleton_description->szName);
+	if (data_descriptions != NULL) {
+		// Find skeleton data description that matches id
+		for (int i = 0; i < data_descriptions->nDataDescriptions; i++) {
+			sDataDescription description = data_descriptions->arrDataDescriptions[i];
+			if (description.type == Descriptor_Skeleton
+				&& description.Data.SkeletonDescription->skeletonID == id) {
+				
+				skeleton_description = description.Data.SkeletonDescription;
+			}
 		}
 	}
 
+	if (frame == NULL || skeleton_description == NULL) {
+		if (skeleton_data_error == false) {
+			print_line("Couldn't retrieve bone data.");
+			skeleton_data_error = true;
+		}
+
+		// return empty array
+		return bone_data;
+	}
+
+	int index = get_skeleton_index(id);
+
 	// get position and rotation data from data frame
-	if (frame != NULL && index < frame->nSkeletons) {
+	if (index >= 0 && index < frame->nSkeletons) {
 		sSkeletonData skeleton = frame->Skeletons[index];
 
 		for (int i = 0; i < skeleton.nRigidBodies; i++) {
 			Array data = Array();
-			data.resize(3);
+			data.resize(4);
 
-			String bone_name = skeleton_description->RigidBodies[i].szName;
+			String bone_name = String(skeleton_description->RigidBodies[i].szName);
 			int parentID = skeleton_description->RigidBodies[i].parentID;
 
-			//NatNet_DecodeID(skeleton.RigidBodyData[i].ID, &parentID, &boneID);
+			int entityid, memberid;
+			NatNet_DecodeID(skeleton.RigidBodyData[i].ID, &entityid, &memberid);
+
+			if (memberid != skeleton_description->RigidBodies[i].ID) {
+				print_error("bone indexing mismatch!");
+				print_line(bone_name);
+				print_line("data description index: "+ String::num_int64(skeleton_description->RigidBodies[i].ID));
+				print_line("data frame index:       "+ String::num_int64(memberid));
+			}
 			
 			Vector3 position = Vector3(skeleton.RigidBodyData[i].x,
 									   skeleton.RigidBodyData[i].y,
@@ -370,16 +457,22 @@ Dictionary MotiveClient::get_skeleton_bone_data(int index) {
 											 skeleton.RigidBodyData[i].qy,
 											 skeleton.RigidBodyData[i].qz,
 											 skeleton.RigidBodyData[i].qw);
-			data.set(0, parentID);
-			data.set(1, position);
-			data.set(2, rotation);
+			data.set(0, memberid);
+			data.set(1, parentID);
+			data.set(2, position);
+			data.set(3, rotation);
 			bone_data.set(bone_name, data);
+			
+			skeleton_data_error = false;
 		}
 		return bone_data;
 	}
+	// bad index
 	else {
-		print_line("Could not retrieve bone data. Check connection to Motive");
-
+		if (skeleton_data_error == false) {
+			print_line("Couldn't retrieve bone data.");
+			skeleton_data_error = true;
+		}
 		// return empty array
 		return bone_data;
 	}
