@@ -4,7 +4,6 @@ import sys
 
 from methods import print_error
 
-
 libname = "OptiTrack-plugin"
 projectdir = "example-project"
 
@@ -33,7 +32,10 @@ env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 env.Append(CPPPATH=["src/", "include/"])
 sources = Glob("src/*.cpp")
 
-env.Append(LIBS=["NatNetLib"])
+if env["platform"] in ("linuxbsd", "linux"):
+    env.Append(LIBS=["libNatNet"])
+else:
+    env.Append(LIBS=["NatNetLib"])
 env.Append(LIBPATH=["lib/NatNet/"])
 
 if env["target"] in ["editor", "template_debug"]:
