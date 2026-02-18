@@ -20,8 +20,6 @@ protected:
 	static void _bind_methods();
 
 	bool connected;
-	bool rigid_body_data_error;
-	bool skeleton_data_error;
 
 	NatNetClient* client;
     sNatNetClientConnectParams params;

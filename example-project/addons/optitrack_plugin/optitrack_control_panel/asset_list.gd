@@ -19,7 +19,8 @@ func update_list() -> void:
 		# add each rigid body asset to list
 		for id in rigid_body_assets:
 			var item_str = rigid_body_assets[id]
-			add_item(item_str, null, false)
+			if item_str != "Unassigned":
+				add_item(item_str, null, false)
 		
 		index = add_item("Skeleton Assets", null, false)
 		set_item_custom_bg_color(index, Color(0.212, 0.239, 0.29, 1.0))
@@ -30,7 +31,8 @@ func update_list() -> void:
 		# add each skeleton asset to list
 		for id in skeleton_assets:
 			var item_str = skeleton_assets[id]
-			add_item(item_str, null, false)
+			if item_str != "Unassigned":
+				add_item(item_str, null, false)
 
 
 # update list when refresh button is pressed

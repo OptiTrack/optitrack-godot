@@ -52,7 +52,14 @@ func _update_property() -> void:
 	
 	updating = true
 	current_value = new_value
-	# make sure that current value is selected
+	
+	# check if current value is in asset list, add "unlisted asset" option if not
+	var index = property_control.get_item_index(current_value)
+	if index == -1:
+		var unlisted_text = String.num_int64(current_value) + ": Unlisted asset"
+		property_control.add_item(unlisted_text, current_value)
+	
+	# select current value
 	property_control.select(property_control.get_item_index(current_value))
 	updating = false
 
@@ -62,19 +69,25 @@ func _on_refresh_button_pressed() -> void:
 
 
 func refresh_asset_list() -> void:
-	# update asset_dictionary
+	# save currently selected id value
+	var selected_id = property_control.get_selected_id()
+	
+	# get assets from Motive
 	if EditorInterface.is_plugin_enabled("optitrack_plugin"):
 		asset_dict = OptiTrack.get_rigid_body_assets()
 	else:
-		asset_dict = {-1 : "Check Motive connection"}
+		asset_dict = {999 : "Plugin disabled"}
 	
 	property_control.clear()
 	
+	# add all assets to OptionList
 	for streaming_ID in asset_dict:
 		property_control.add_item(asset_dict[streaming_ID], streaming_ID)
 	
-	if asset_dict.has(-1):
-		current_value = -1
+	# add "unlisted asset" option when the selected value is not in the list
+	if selected_id != -1 and property_control.get_item_index(current_value) == -1:
+		var unlisted_text = String.num_int64(selected_id) + ": Unlisted asset"
+		property_control.add_item(unlisted_text, selected_id)
 	
 	# make sure correct option is selected after list was cleared and repopulated
 	var current_index = property_control.get_item_index(current_value)
