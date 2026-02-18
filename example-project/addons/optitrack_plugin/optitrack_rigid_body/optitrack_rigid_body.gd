@@ -1,7 +1,8 @@
 @tool
 extends Node3D
 
-@export var rigid_body_asset_ID : int = -1
+# rigid_body_asset_ID defaults to "Unassigned"
+@export var rigid_body_asset_ID : int = 999
 @export var animate_in_editor : bool = true
 
 # Called when the node enters the scene tree for the first time.

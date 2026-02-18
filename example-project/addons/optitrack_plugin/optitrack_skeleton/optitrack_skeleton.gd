@@ -1,8 +1,8 @@
 @tool
 extends Skeleton3D
 
-
-@export var skeleton_asset_ID : int = -1
+# skeleton_asset_ID defaults to "Unassigned"
+@export var skeleton_asset_ID : int = 999
 @export var animate_in_editor : bool = true
 
 
