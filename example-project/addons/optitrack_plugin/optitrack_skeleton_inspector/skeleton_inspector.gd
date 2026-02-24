@@ -36,6 +36,9 @@ func _parse_category(object: Object, category: String) -> void:
 func _on_update_bones_button_pressed() -> void:
 	var skeleton = EditorInterface.get_inspector().get_edited_object()
 	skeleton.update_bones()
+	
+	# refresh inspector
+	skeleton.notify_property_list_changed()
 
 
 #func _parse_group(object: Object, group: String) -> void:

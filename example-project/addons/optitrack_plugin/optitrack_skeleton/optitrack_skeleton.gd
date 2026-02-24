@@ -5,6 +5,10 @@ extends Skeleton3D
 @export var skeleton_asset_ID : int = 999
 @export var animate_in_editor : bool = true
 
+@export_group("Offset")
+@export var position_offset : Vector3 = Vector3.ZERO
+@export var rotation_offset : Quaternion = Quaternion.IDENTITY
+@export_group("")
 
 
 # Called when the node enters the scene tree for the first time.
@@ -14,14 +18,17 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint():
-		# in editor, check that the plugin is enabled and animate_in_editor is true
-		if EditorInterface.is_plugin_enabled("optitrack_plugin") and animate_in_editor:
-			if OptiTrack.is_connected_to_motive():
-				update_pose()
+		# in editor, don't animate if any of these conditions are false
+		if animate_in_editor == false \
+		or EditorInterface.is_plugin_enabled("optitrack_plugin") == false \
+		or OptiTrack.is_connected_to_motive() == false:
+			return
 	else:
 		# if not in editor, check that the autoload is present
-		if get_node_or_null("/root/OptiTrack") != null:
-			update_pose()
+		if get_node_or_null("/root/OptiTrack") == null:
+			return
+	
+	update_pose()
 
 
 func print_bone_tree(bones : Dictionary, root_index : int, depth : int):
@@ -30,7 +37,6 @@ func print_bone_tree(bones : Dictionary, root_index : int, depth : int):
 	for index in range(get_bone_count()):
 		if get_bone_parent(index) == root_index:
 			print_bone_tree(bones, index, depth + 1)
-
 
 
 func update_pose() -> void:
@@ -42,8 +48,17 @@ func update_pose() -> void:
 	for bone in bone_data:
 		var bone_index = find_bone(bone)
 		
-		set_bone_pose_position(bone_index, bone_data[bone].get(2))
-		set_bone_pose_rotation(bone_index, bone_data[bone].get(3))
+		var bone_position = bone_data[bone].get(2)
+		var bone_rotation = bone_data[bone].get(3)
+		
+		# modify position/rotation of root bone by offset
+		if get_bone_parent(bone_index) == -1:
+			bone_position = rotation_offset * bone_position
+			bone_position = bone_position + position_offset
+			bone_rotation = rotation_offset * bone_rotation
+		
+		set_bone_pose_position(bone_index, bone_position)
+		set_bone_pose_rotation(bone_index, bone_rotation)
 
 
 
@@ -52,7 +67,7 @@ func update_bones() -> void:
 	
 	if OptiTrack.is_connected_to_motive() == false:
 		return
-		
+	
 	var bones = OptiTrack.get_skeleton_bone_data(skeleton_asset_ID)
 	
 	if bones.is_empty():
@@ -66,6 +81,7 @@ func update_bones() -> void:
 	# 1. the bone's parent's id (int)
 	# 2. the bone's position (Vector3D)
 	# 3. the bone's rotation (Quaternion)
+	
 	for bone_name in bones:
 		# parse bone data
 		var bone_id = bones[bone_name].get(0)
@@ -83,8 +99,6 @@ func update_bones() -> void:
 			if bones[get_bone_name(i)].get(0) == parent_id:
 				parent_index = i
 		
-		#var parent_index = bones[bone].get(0) - 1
 		set_bone_parent(bone_index, parent_index)
-		#print("bone parent: %d" % parent_index)
 		set_bone_pose_position(bone_index, bone_position)
 		set_bone_pose_rotation(bone_index, bone_rotation)
