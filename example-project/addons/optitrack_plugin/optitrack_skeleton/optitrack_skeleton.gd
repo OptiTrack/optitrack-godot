@@ -31,13 +31,6 @@ func _process(delta: float) -> void:
 	update_pose()
 
 
-func print_bone_tree(bones : Dictionary, root_index : int, depth : int):
-	print(" ".repeat(depth) + get_bone_name(root_index))
-	
-	for index in range(get_bone_count()):
-		if get_bone_parent(index) == root_index:
-			print_bone_tree(bones, index, depth + 1)
-
 
 func update_pose() -> void:
 	if get_bone_count() == 0 or not OptiTrack.is_connected_to_motive():
@@ -102,3 +95,12 @@ func update_bones() -> void:
 		set_bone_parent(bone_index, parent_index)
 		set_bone_pose_position(bone_index, bone_position)
 		set_bone_pose_rotation(bone_index, bone_rotation)
+
+
+## Prints the bone hierarchy to the console. Useful for debugging.
+func print_bone_tree(bones : Dictionary, root_index : int, depth : int):
+	print(" ".repeat(depth) + get_bone_name(root_index))
+	
+	for index in range(get_bone_count()):
+		if get_bone_parent(index) == root_index:
+			print_bone_tree(bones, index, depth + 1)

@@ -1,15 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://biv80cjvholgs"]
+[gd_scene load_steps=6 format=3 uid="uid://biv80cjvholgs"]
 
 [ext_resource type="Script" uid="uid://bjucqtaks5kya" path="res://addons/optitrack_plugin/optitrack_rigid_body/optitrack_rigid_body.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://d4m08qt1e6elp" path="res://addons/optitrack_plugin/optitrack_skeleton/optitrack_skeleton.gd" id="2_0xm2m"]
+[ext_resource type="SkeletonProfile" uid="uid://dumjgp0xn67ju" path="res://addons/optitrack_plugin/SkeletonProfile3.tres" id="3_h2yge"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ig7tw"]
-albedo_color = Color(0, 0.31333002, 0.64424413, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
 
-[sub_resource type="TextMesh" id="TextMesh_0xm2m"]
-material = SubResource("StandardMaterial3D_ig7tw")
-text = "OptiTrack"
-font_size = 127
-depth = 0.25
+[sub_resource type="BoxMesh" id="BoxMesh_lquwl"]
+material = SubResource("StandardMaterial3D_1bvp3")
 
 [node name="Main" type="Node3D"]
 
@@ -20,8 +18,18 @@ transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.965
 transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 4, 7)
 
 [node name="OptiTrackRigidBody" type="Node3D" parent="."]
+transform = Transform3D(1.0000001, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
 script = ExtResource("1_ig7tw")
 metadata/_custom_type_script = "uid://bjucqtaks5kya"
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="OptiTrackRigidBody"]
-mesh = SubResource("TextMesh_0xm2m")
+[node name="Cube" type="MeshInstance3D" parent="OptiTrackRigidBody"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_lquwl")
+
+[node name="OptiTrackSkeleton" type="Skeleton3D" parent="."]
+script = ExtResource("2_0xm2m")
+metadata/_custom_type_script = "uid://d4m08qt1e6elp"
+
+[node name="RetargetModifier3D" type="RetargetModifier3D" parent="OptiTrackSkeleton"]
+profile = ExtResource("3_h2yge")
+use_global_pose = true
