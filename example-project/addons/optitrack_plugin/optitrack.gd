@@ -12,3 +12,6 @@ func _init() -> void:
 	set_multicast(settings.multicast)
 	
 	connect_to_motive()
+	
+	# fetch data descriptions, important so skeletons animate
+	get_skeleton_assets()
