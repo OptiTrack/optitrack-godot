@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://0b80h4ltlfaw"
-path="res://.godot/imported/MotiveAvatar-m-3.fbx-03f948934c1a5a62d842031b3649e4ec.scn"
+path="res://.godot/imported/OptiTrackAvatarMale3.fbx-b05009c7cbb3527a1b1ce1723859d2c6.scn"
 
 [deps]
 
-source_file="res://addons/optitrack_plugin/models/MotiveAvatar-m-3.fbx"
-dest_files=["res://.godot/imported/MotiveAvatar-m-3.fbx-03f948934c1a5a62d842031b3649e4ec.scn"]
+source_file="res://addons/optitrack_plugin/model scenes/FBX/OptiTrackAvatarMale3.fbx"
+dest_files=["res://.godot/imported/OptiTrackAvatarMale3.fbx-b05009c7cbb3527a1b1ce1723859d2c6.scn"]
 
 [params]
 

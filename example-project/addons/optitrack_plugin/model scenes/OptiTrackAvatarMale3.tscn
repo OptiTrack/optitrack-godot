@@ -553,7 +553,7 @@ metadata/_custom_type_script = "uid://d4m08qt1e6elp"
 profile = ExtResource("2_f1o7q")
 use_global_pose = true
 
-[node name="MotiveAvatarMale3Skeleton" type="Skeleton3D" parent="RetargetModifier3D"]
+[node name="OptiTrackAvatarMale3Skeleton" type="Skeleton3D" parent="RetargetModifier3D"]
 unique_name_in_owner = true
 motion_scale = 0.97202086
 bones/0/name = "Root"
@@ -921,6 +921,6 @@ bones/51/position = Vector3(1.1920929e-07, -0.062160805, 0.14344788)
 bones/51/rotation = Quaternion(0.006742702, 2.1935822e-08, 7.302841e-09, 0.9999773)
 bones/51/scale = Vector3(0.9999999, 1, 0.9999998)
 
-[node name="MotiveAvatarMale3Mesh" type="MeshInstance3D" parent="RetargetModifier3D/MotiveAvatarMale3Skeleton"]
+[node name="OptiTrackAvatarMale3Mesh" type="MeshInstance3D" parent="RetargetModifier3D/OptiTrackAvatarMale3Skeleton"]
 mesh = SubResource("ArrayMesh_ji457")
 skin = SubResource("Skin_mhb4d")
