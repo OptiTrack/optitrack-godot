@@ -31,7 +31,7 @@ Lastly, the **Info** section provides a link to OptiTrack's documentation websit
 To animate a rigid body in Godot, add an OptiTrackRigidBody node into the scene tree, for example, by pressing the **+** button in the top right of the **Scene** dock. Find the OptiTrackRigidBody node type under Node3D or by searching, and then click **Create**. Add the node or scene that you want to be animated to scene tree as a child of the OptiTrackRigidBody node.
 
 Select the OptiTrackRigidBody node in the scene tree. In the **Inspector** tab on the right side of the editor, there are two properties you can edit. 
-1. **Rigid Body Asset ID:** The dropdown menu will show the rigid body assets that are being streamed from Motive. This property defaults to "Unassigned", which means the skeleton is not associated with an asset and will not animate. If no assests are listed, make sure that you have started a connection with Motive through the OptiTrack dock then press the **Refresh Asset List** button. If the selected asset says "Unlisted", the skeleton has been assigned to an asset, but that asset is not currently being streamed from Motive.
+1. **Rigid Body Asset ID:** The dropdown menu will show the rigid body assets that are being streamed from Motive. This property defaults to "Unassigned", which means the skeleton is not associated with an asset and will not animate. If no assets are listed, make sure that you have started a connection with Motive through the OptiTrack dock then press the **Refresh Asset List** button. If the selected asset says "Unlisted", the skeleton has been assigned to an asset, but that asset is not currently being streamed from Motive.
 2. **Animate in Editor:** Checking this box will cause the rigid body to animate in the editor in the 3D workspace. When the box is not checked, the rigid body will not be animated in the editor, but will still animate when the scene is played.
 
 Once you have assigned a rigid body asset to the OptiTrackRigidBody Node (#1 above) you can play the scene and the rigid body will be animated to match that rigid body. 
@@ -46,8 +46,8 @@ This plugin provides several 3D models to get skeletons animating as fast as pos
 
 #### Using the Provided 3D Models
 
-1. In the **FileSystem** dock navigate to the `res://addons/optitrack-plugin/models` directory. 
-2. Find the packed scene (.tscn file) corresponding to the structure of the skeleton you want to animate. Motive streams skeletons with either three or seven spine bones, and the plugin provides a male and female model for each of these options. For example, choose `MotiveAvatarMale3.tscn` for a male model with three spine bones.
+1. In the **FileSystem** dock navigate to the `res://addons/optitrack-plugin/model scenes` directory. 
+2. Find the packed scene (.tscn file) corresponding to the structure of the skeleton you want to animate. Motive streams skeletons with either three or seven spine bones, and the plugin provides a male and female model for each of these options. For example, choose `OptiTrackAvatarMale3.tscn` for a male model with three spine bones.
 3. Instantiate the scene by clicking and dragging it into the **Scene Tree**.
 4. Select the OptiTrackSkeleton scene. In the **Inspector**, assign an asset to the skeleton by selecting one from the **Skeleton Asset ID** dropdown menu. If no assets are listed, check that you are connected to Motive (see Configure the Connection with Motive section above) and click the **Refresh Asset List** button.
 
@@ -57,8 +57,8 @@ The 3D model should animate according to the data streamed from Motive.
 
 1. Add your 3D model (e.g., .fbx file) into your project folder so that it appears in the **FileSystem**.
 2. Double click the 3D model file in the **FileSystem** to open the Advanced Import Menu.
-3. In the scene tree on the left side of the window, select the Skeleton3D node. In the inspector panel on the right side of the window click the **BoneMap** property under the **Retargeting** section.
-4. Click the arrow on the right side of the **Profile** property.  Select **Load**, navigate to the `res://addons/optitrack-plugin/` folder and select the SkeletonProfile corresponding to the structure of the skeleton you want to animate: `SkeletonProfile3.tres` for a three spine bone skeleton or `SkeletonProfile7.tres` for a seven spine bone skeleton.
+3. In the scene tree on the left side of the window, select the Skeleton3D node. In the inspector panel on the right side of the window click the arrow to the right of the **BoneMap** property under the **Retargeting** section. From the dropdown menu select **BoneMap** under the **New** heading.
+4. Click the BoneMap object to edit it. Click the arrow on the right side of the **Profile** property.  Select **Load**, navigate to the `res://addons/optitrack-plugin/` folder and select the SkeletonProfile corresponding to the structure of the skeleton you want to animate: `SkeletonProfile3.tres` for a three spine bone skeleton or `SkeletonProfile7.tres` for a seven spine bone skeleton.
 5. Select each bone in the bone map and use the bone picker tool (the icon to the right of the bone name) to assign a bone from your imported model to a bone in the skeleton profile. If you are animating hand bones, be sure to assign bones for each hand bone by switching to the LeftHand and RightHand groups as well.
 6. Once all bones have been assigned, click the **Reimport** button at the bottom of the window.
 7. Add the model into the scene tree by clicking and dragging it from the **FileSystem** dock into the scene tree.
@@ -92,7 +92,7 @@ To start developing this plugin:
 
 1. Download the latest version of Godot.
 2. Obtain a copy of the source code from this repository (see GitHub's guide to [cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for help).
-3. If you intend to edit the the C++ source code of the plugin, you will need a C++ compiler and SCons, a Python-based build tool (for instructions for installing Scons refer to the [Scons GitHub repository](https://github.com/SCons/scons?tab=readme-ov-file#installation))
+3. If you intend to edit the C++ source code of the plugin, you will need a C++ compiler and SCons, a Python-based build tool (for instructions for installing Scons refer to the [Scons GitHub repository](https://github.com/SCons/scons?tab=readme-ov-file#installation))
 
 ### Project Organization
 
@@ -108,7 +108,7 @@ The OptiTrack plugin has several parts to it:
 
 The `include/` and `lib/` directories are for external libraries, i.e., the headers and binaries from the NatNet SDK. The compiled binaries are copied into the `example-project/addons/optitrack_plugin/bin/` directory and must be present in a project's `/addons/optitrack_plugin/bin/` folder for the plugin to work.
 
-The `example-project/addons/optitrack_plugin/models/` directory contains 3D models for use with the OptiTrackSkeleton. It provides ready-to-use packed scenes as well as the original FBX files for the 3D models used in the scenes.
+The `example-project/addons/optitrack_plugin/model scenes/` directory provides ready-to-use packed scenes that can be added into a project with less setup. The `FBX/` subdirectory contains the original FBX files for the 3D models used in the scenes.
 
 The `godot-cpp/` is a submodule that contains all the code for Godot. It is necessary for compiling the GDExtension code (see the [GDExtension C++ tutorial](https://docs.godotengine.org/en/stable/tutorials/scripting/cpp/gdextension_cpp_example.html)).
 

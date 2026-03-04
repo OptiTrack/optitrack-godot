@@ -1,12 +1,20 @@
 @tool
 extends Node3D
 
-# rigid_body_asset_ID defaults to "Unassigned"
+## ID corresponding to the Motive asset that this rigid body will track. 
+## Defaults to "Unassigned". 
 @export var rigid_body_asset_ID : int = 999
+## When on, the rigid body will be animated in the Godot editor's 3D workspace.
+## This setting only affects in-editor behavior. The rigid body will animate 
+## when the scene is played whether this setting is on or off.
 @export var animate_in_editor : bool = true
 
 @export_group("Offset")
+## Defines a translational transformation. The coordinates provided to this 
+## property will correspond to the origin (0, 0, 0) in Motive's data.
 @export var position_offset : Vector3 = Vector3.ZERO
+## Defines a rotational transformation. The quaternion provided will rotate the
+## data around the position offset coordinate.
 @export var rotation_offset : Quaternion = Quaternion.IDENTITY
 @export_group("")
 
