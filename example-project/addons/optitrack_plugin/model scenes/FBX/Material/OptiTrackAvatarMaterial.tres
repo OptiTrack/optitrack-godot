@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" load_steps=4 format=3 uid="uid://fk5h223bw4q7"]
+
+[ext_resource type="Texture2D" uid="uid://ba558of2lt35f" path="res://addons/optitrack_plugin/model scenes/FBX/Material/OptiTrackMaleAvatarDiffuse.png" id="1_bcivc"]
+[ext_resource type="Texture2D" uid="uid://st0mb2jyydrl" path="res://addons/optitrack_plugin/model scenes/FBX/Material/OptiTrackMaleAvatarNormal.png" id="2_h0boh"]
+[ext_resource type="Texture2D" uid="uid://bojku2k6of1kv" path="res://addons/optitrack_plugin/model scenes/FBX/Material/OptiTrackMaleAvatarRoughness.png" id="3_nliqg"]
+
+[resource]
+albedo_texture = ExtResource("1_bcivc")
+roughness_texture = ExtResource("3_nliqg")
+normal_enabled = true
+normal_texture = ExtResource("2_h0boh")

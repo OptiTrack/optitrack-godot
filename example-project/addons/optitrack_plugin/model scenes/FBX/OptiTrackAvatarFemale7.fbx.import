@@ -1,0 +1,58 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://b7giqtx1xgrau"
+path="res://.godot/imported/OptiTrackAvatarFemale7.fbx-2c6495dca7e64d5f14959aca56cd6f3f.scn"
+
+[deps]
+
+source_file="res://addons/optitrack_plugin/model scenes/FBX/OptiTrackAvatarFemale7.fbx"
+dest_files=["res://.godot/imported/OptiTrackAvatarFemale7.fbx-2c6495dca7e64d5f14959aca56cd6f3f.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=true
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"materials": {
+"lambert5": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://addons/optitrack_plugin/model scenes/FBX/Material/OptiTrackAvatarMaterial.tres",
+"use_external/path": "uid://fk5h223bw4q7"
+}
+},
+"nodes": {
+"PATH:Skeleton3D": {
+"retarget/bone_map": Object(BoneMap,"resource_local_to_scene":false,"resource_name":"","profile":Resource("uid://jhu5vy0ludps", "res://addons/optitrack_plugin/SkeletonProfile7.tres"),"bonemap":null,"bone_map/Hips":&"pelvis","bone_map/Spine":&"spine_01","bone_map/Spine1":&"spine_02","bone_map/Spine2":&"spine_03","bone_map/Spine3":&"spine_04","bone_map/Spine4":&"spine_05","bone_map/Neck":&"neck_01","bone_map/Neck1":&"neck_02","bone_map/Head":&"head","bone_map/LeftShoulder":&"clavicle_l","bone_map/LeftArm":&"upperarm_l","bone_map/LeftForeArm":&"lowerarm_l","bone_map/LeftHand":&"hand_l","bone_map/RightShoulder":&"clavicle_r","bone_map/RightArm":&"upperarm_r","bone_map/RightForeArm":&"lowerarm_r","bone_map/RightHand":&"hand_r","bone_map/LeftUpLeg":&"thigh_l","bone_map/LeftLeg":&"calf_l","bone_map/LeftFoot":&"foot_l","bone_map/LeftToeBase":&"ball_l","bone_map/RightUpLeg":&"thigh_r","bone_map/RightLeg":&"calf_r","bone_map/RightFoot":&"foot_r","bone_map/RightToeBase":&"ball_r","bone_map/LeftHandThumb1":&"thumb_01_l","bone_map/LeftHandThumb2":&"thumb_02_l","bone_map/LeftHandThumb3":&"thumb_03_l","bone_map/LeftHandIndex1":&"index_01_l","bone_map/LeftHandIndex2":&"index_02_l","bone_map/LeftHandIndex3":&"index_03_l","bone_map/LeftHandMiddle1":&"middle_01_l","bone_map/LeftHandMiddle2":&"middle_02_l","bone_map/LeftHandMiddle3":&"middle_03_l","bone_map/LeftHandRing1":&"ring_01_l","bone_map/LeftHandRing2":&"ring_02_l","bone_map/LeftHandRing3":&"ring_03_l","bone_map/LeftHandPinky1":&"pinky_01_l","bone_map/LeftHandPinky2":&"pinky_02_l","bone_map/LeftHandPinky3":&"pinky_03_l","bone_map/RightHandThumb1":&"thumb_01_r","bone_map/RightHandThumb2":&"thumb_02_r","bone_map/RightHandThumb3":&"thumb_03_r","bone_map/RightHandIndex1":&"index_01_r","bone_map/RightHandIndex2":&"index_02_r","bone_map/RightHandIndex3":&"index_03_r","bone_map/RightHandMiddle1":&"middle_01_r","bone_map/RightHandMiddle2":&"middle_02_r","bone_map/RightHandMiddle3":&"middle_03_r","bone_map/RightHandRing1":&"ring_01_r","bone_map/RightHandRing2":&"ring_02_r","bone_map/RightHandRing3":&"ring_03_r","bone_map/RightHandPinky1":&"pinky_01_r","bone_map/RightHandPinky2":&"pinky_02_r","bone_map/RightHandPinky3":&"pinky_03_r","script":null)
+
+}
+}
+}
+fbx/importer=0
+fbx/allow_geometry_helper_nodes=false
+fbx/embedded_image_handling=1
+fbx/naming_version=2
