@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://biv80cjvholgs"]
 
 [ext_resource type="Script" uid="uid://bjucqtaks5kya" path="res://addons/optitrack_plugin/optitrack_rigid_body/optitrack_rigid_body.gd" id="1_ig7tw"]
-[ext_resource type="Script" uid="uid://d4m08qt1e6elp" path="res://addons/optitrack_plugin/optitrack_skeleton/optitrack_skeleton.gd" id="2_0xm2m"]
-[ext_resource type="SkeletonProfile" uid="uid://dumjgp0xn67ju" path="res://addons/optitrack_plugin/SkeletonProfile3.tres" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://bqueu8ldqobsq" path="res://addons/optitrack_plugin/model scenes/OptiTrackAvatarFemale7.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://cw446vsmq6tvk" path="res://addons/optitrack_plugin/model scenes/OptiTrackAvatarMale3.tscn" id="3_1bvp3"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
 
@@ -26,10 +26,6 @@ metadata/_custom_type_script = "uid://bjucqtaks5kya"
 transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("BoxMesh_lquwl")
 
-[node name="OptiTrackSkeleton" type="Skeleton3D" parent="."]
-script = ExtResource("2_0xm2m")
-metadata/_custom_type_script = "uid://d4m08qt1e6elp"
+[node name="OptiTrackSkeleton3" parent="." instance=ExtResource("2_h2yge")]
 
-[node name="RetargetModifier3D" type="RetargetModifier3D" parent="OptiTrackSkeleton"]
-profile = ExtResource("3_h2yge")
-use_global_pose = true
+[node name="OptiTrackSkeleton7" parent="." instance=ExtResource("3_1bvp3")]
