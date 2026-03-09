@@ -20,7 +20,7 @@ OptiTrack="*res://addons/optitrack_plugin/optitrack.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/optitrack_plugin/optitrack_control_panel/plugin.cfg", "res://addons/optitrack_plugin/optitrack_rigid_body/plugin.cfg", "res://addons/optitrack_plugin/optitrack_rigid_body_inspector/plugin.cfg", "res://addons/optitrack_plugin/plugin.cfg")
+enabled=PackedStringArray("res://addons/optitrack_plugin/optitrack_control_panel/plugin.cfg", "res://addons/optitrack_plugin/optitrack_rigid_body/plugin.cfg", "res://addons/optitrack_plugin/optitrack_rigid_body_inspector/plugin.cfg", "res://addons/optitrack_plugin/optitrack_skeleton/plugin.cfg", "res://addons/optitrack_plugin/optitrack_skeleton_inspector/plugin.cfg", "res://addons/optitrack_plugin/plugin.cfg")
 
 [rendering]
 

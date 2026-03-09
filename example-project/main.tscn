@@ -1,15 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://biv80cjvholgs"]
+[gd_scene load_steps=6 format=3 uid="uid://biv80cjvholgs"]
 
 [ext_resource type="Script" uid="uid://bjucqtaks5kya" path="res://addons/optitrack_plugin/optitrack_rigid_body/optitrack_rigid_body.gd" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://bqueu8ldqobsq" path="res://addons/optitrack_plugin/model scenes/OptiTrackAvatarFemale7.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://cw446vsmq6tvk" path="res://addons/optitrack_plugin/model scenes/OptiTrackAvatarMale3.tscn" id="3_1bvp3"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ig7tw"]
-albedo_color = Color(0, 0.31333002, 0.64424413, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
 
-[sub_resource type="TextMesh" id="TextMesh_0xm2m"]
-material = SubResource("StandardMaterial3D_ig7tw")
-text = "OptiTrack"
-font_size = 127
-depth = 0.25
+[sub_resource type="BoxMesh" id="BoxMesh_lquwl"]
+material = SubResource("StandardMaterial3D_1bvp3")
 
 [node name="Main" type="Node3D"]
 
@@ -20,8 +18,14 @@ transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.965
 transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 4, 7)
 
 [node name="OptiTrackRigidBody" type="Node3D" parent="."]
+transform = Transform3D(1.0000001, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
 script = ExtResource("1_ig7tw")
 metadata/_custom_type_script = "uid://bjucqtaks5kya"
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="OptiTrackRigidBody"]
-mesh = SubResource("TextMesh_0xm2m")
+[node name="Cube" type="MeshInstance3D" parent="OptiTrackRigidBody"]
+transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("BoxMesh_lquwl")
+
+[node name="OptiTrackSkeleton3" parent="." instance=ExtResource("2_h2yge")]
+
+[node name="OptiTrackSkeleton7" parent="." instance=ExtResource("3_1bvp3")]
