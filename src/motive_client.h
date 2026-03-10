@@ -13,6 +13,8 @@
 
 using namespace godot;
 
+void NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData);
+
 class MotiveClient : public Node {
 	GDCLASS(MotiveClient, Node)
 

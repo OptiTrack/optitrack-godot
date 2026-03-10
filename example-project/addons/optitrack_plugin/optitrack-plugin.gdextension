@@ -64,3 +64,8 @@ windows.x86_64.single.debug = "./bin/NatNetLib.dll"
 windows.x86_64.double.debug = "./bin/NatNetLib.dll"
 windows.x86_64.single.release = "./bin/NatNetLib.dll"
 windows.x86_64.double.release = "./bin/NatNetLib.dll"
+
+linux.x86_64.single.debug = "./bin/libNatNet.so"
+linux.x86_64.double.debug = "./bin/libNatNet.so"
+linux.x86_64.single.release = "./bin/libNatNet.so"
+linux.x86_64.double.release = "./bin/libNatNet.so"
