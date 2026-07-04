@@ -94,6 +94,55 @@ To start developing this plugin:
 2. Obtain a copy of the source code from this repository (see GitHub's guide to [cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) for help).
 3. If you intend to edit the C++ source code of the plugin, you will need a C++ compiler and SCons, a Python-based build tool (for instructions for installing Scons refer to the [Scons GitHub repository](https://github.com/SCons/scons?tab=readme-ov-file#installation))
 
+### Platform Support
+
+This plugin runs on both **Windows** and **Linux (Ubuntu)**. Each platform links against its own copy of OptiTrack's NatNet SDK:
+
+| Platform | NatNet runtime | Headers | Plugin binary |
+| --- | --- | --- | --- |
+| Windows (x86_64) | `lib/NatNet/NatNetLib.dll` (+ `.lib`), NatNet 4.4 | `include/NatNet/` | `OptiTrack-plugin.windows.template_*.x86_64.dll` |
+| Linux (x86_64) | `lib/NatNet/libNatNet.so`, NatNet 4.5 | `include/NatNet/` | `libOptiTrack-plugin.linux.template_*.x86_64.so` |
+
+Both platforms share a single set of NatNet headers in `include/NatNet/`. These are the NatNet 4.5 headers, which are an append-only superset of the 4.4 headers: every struct the plugin uses keeps the same field layout, so they are binary-compatible with the Windows 4.4 runtime while also matching the shipped Linux 4.5 `libNatNet.so`. The `SConstruct` selects the correct link library and runtime `RPATH` automatically based on the target `platform`. The prebuilt runtime library for the current platform is copied next to the compiled plugin in `example-project/addons/optitrack_plugin/bin/`, and `optitrack-plugin.gdextension` lists it as a dependency so Godot loads it alongside the plugin.
+
+### Building for Linux (Ubuntu)
+
+The plugin's GDExtension library is native code and must be compiled on Linux (it cannot be cross-compiled from the Windows binaries). On a Ubuntu machine:
+
+1. Install the build dependencies:
+
+   ```bash
+   sudo apt update
+   sudo apt install -y build-essential scons python3 git pkg-config
+   ```
+
+2. From the project root, run the helper script (it fetches `godot-cpp` if needed and builds both the debug and release targets):
+
+   ```bash
+   ./build_linux.sh
+   ```
+
+   Or invoke SCons directly:
+
+   ```bash
+   git submodule update --init --recursive   # or clone godot-cpp into godot-cpp/
+   scons platform=linux target=template_debug arch=x86_64
+   scons platform=linux target=template_release arch=x86_64
+   ```
+
+3. The build stages `libOptiTrack-plugin.linux.template_*.x86_64.so` and `libNatNet.so` into `example-project/addons/optitrack_plugin/bin/`. Copy the whole `addons/optitrack_plugin/` folder into your own Godot project's `addons/` directory (see "How to install the Plugin" above) and enable the plugin.
+
+`libNatNet.so` is linked with an `$ORIGIN` `RPATH`, so it is found automatically as long as it sits next to the plugin `.so` in the `bin/` folder — no `LD_LIBRARY_PATH` setup is required.
+
+### Building for Windows
+
+A prebuilt Windows binary is already included in `example-project/addons/optitrack_plugin/bin/`. To rebuild it, install SCons and a C++ compiler (MSVC), then run:
+
+```
+scons platform=windows target=template_debug arch=x86_64
+scons platform=windows target=template_release arch=x86_64
+```
+
 ### Project Organization
 
 The OptiTrack plugin has several parts to it:
@@ -106,7 +155,7 @@ The OptiTrack plugin has several parts to it:
 6. The OptiTrackSkeleton custom node. This sub-plugin registers a new type of Node with the Godot editor. When connected to Motive, the OptiTrackSkelton can be animated with real-time skeleton data streaming from Motive. This custom node is written in GDScript and its files can be found in the `example-project/addons/optitrack_plugin/optitrack_skeleton/` folder.
 7. The OptiTrackSkeleton custom inspector plugin. This sub-plugin defines custom behavior for the OptiTrackSkeleton in Godot's inspector. It is written in GDScript and it can be found in the `example-project/addons/optitrack_plugin/optitrack_skeleton_inspector/` directory.
 
-The `include/` and `lib/` directories are for external libraries, i.e., the headers and binaries from the NatNet SDK. The compiled binaries are copied into the `example-project/addons/optitrack_plugin/bin/` directory and must be present in a project's `/addons/optitrack_plugin/bin/` folder for the plugin to work.
+The `include/` and `lib/` directories are for external libraries, i.e., the headers and binaries from the NatNet SDK. `include/NatNet/` holds a single shared set of NatNet 4.5 headers used by both platforms, and `lib/NatNet/` holds both the Windows (`NatNetLib.dll`/`.lib`) and Linux (`libNatNet.so`) runtimes. The compiled plugin binary, along with the matching NatNet runtime for the platform, is copied into the `example-project/addons/optitrack_plugin/bin/` directory and must be present in a project's `/addons/optitrack_plugin/bin/` folder for the plugin to work.
 
 The `example-project/addons/optitrack_plugin/model scenes/` directory provides ready-to-use packed scenes that can be added into a project with less setup. The `FBX/` subdirectory contains the original FBX files for the 3D models used in the scenes.
 

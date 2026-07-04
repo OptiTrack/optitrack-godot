@@ -15,7 +15,7 @@
 NatNetTypes defines the public, common data structures and types
 used when working with NatNetServer and NatNetClient objects.
 
-version 4.4.0.0
+version 4.5.0.0
 */
 
 #pragma once
@@ -88,9 +88,11 @@ version 4.4.0.0
 #define MAX_ANALOG_CHANNELS         32      // maximum number of data channels (signals) per analog/force plate device
 #define MAX_ANALOG_SUBFRAMES        30      // maximum number of analog/force plate frames per mocap frame
 
-#define MAX_PACKETSIZE              65503   // max size of packet in bytes (actual packet size is dynamic)
-                                            // (65535 byte IP limit - 20 byte IP header - 8 byte UDP header - 4 byte sPacket header = 65503 bytes)
+#define MAX_IMU                    100     // Maximum # of IMUs per frame
+#define MAX_GPIO                    16      // Maximum # of GPIO pins per tag
+#define MAX_ANCHOR                 200     //Maximum # of Anchor Markers per Frame
 
+#define MAX_PACKETSIZE              65503   // max size of packet in bytes (actual packet size is dynamic)
 
 // Client/server message ids
 #define NAT_CONNECT                 0
@@ -156,7 +158,10 @@ typedef enum DataDescriptors
     Descriptor_ForcePlate,
     Descriptor_Device,
     Descriptor_Camera,
-    Descriptor_Asset
+    Descriptor_Asset,
+    Descriptor_IMU,
+	Descriptor_GPIO,
+    Descriptor_Anchor
 } DataDescriptors;
 
 typedef enum AssetTypes
@@ -283,6 +288,13 @@ typedef struct sMarker
     float residual;                         // marker error residual, in m/ray
 } sMarker;
 
+typedef struct sAnchorDescription
+{
+  char szName[MAX_NAMELENGTH];
+  float x, y, z;
+  int32_t ActiveID;
+
+} sAnchor;
 
 // MarkerSet Definition
 typedef struct sMarkerSetDescription
@@ -327,7 +339,9 @@ typedef struct sRigidBodyData
     float x, y, z;                          // Position
     float qx, qy, qz, qw;                   // Orientation
     float MeanError;                        // Mean measure-to-solve deviation (mean marker error) (meters)
-    int16_t params;                         // Host defined tracking flags
+    int16_t params;                         // Host defined paramets. Bit values:
+                                                // 0 : Tracked
+                                                // 1 : Sensor Fused
 
 #if defined(__cplusplus)
     sRigidBodyData()
@@ -411,6 +425,44 @@ typedef struct sAssetDescription
 
 } sAssetDescription;
 
+// IMU description
+typedef struct sIMUDescription
+{
+    char szName[MAX_NAMELENGTH];            // IMU / Tag name
+    int32_t ID;                             // IMU / Tag identifier. 
+
+    bool SensorFused;                       // Whether this is sensor fused.
+    int32_t RigidBodyID;                    // Rigid Body that it's sensor fused with.
+} sIMUDescription;
+
+// IMU data
+typedef struct sIMUData
+{
+    int32_t ID;                             // IMU / Tag identifier. 
+    float x, y, z;                          // IMU Accelerometer Position
+    float qx, qy, qz, qw;                   // IMU Gyroscope Orientation
+    int16_t params;                         // 0: Drift Aligned
+                                            // 1-4: Battery Level
+                                            // 5-8: Wifi Strength
+} sIMUData;
+
+// GPIO description
+typedef struct sGPIODescription
+{
+    char szName[MAX_NAMELENGTH];                    // GPIO / Tag name
+    int32_t ID;                                     // GPIO / Tag identifier. 
+    uint8_t numberOfGPIOPorts;                      // Number of available pins
+    char szGPIONames[MAX_GPIO][MAX_NAMELENGTH];     // GPI Pin Names / Types
+} sGPIODescription;
+
+// GPIO data
+typedef struct sGPIOData
+{
+    int32_t ID;                                     // GPIO / Tag identifier. 
+    uint8_t numberOfGPIOPorts;                      // Number of available pins
+    uint16_t GPIO[MAX_GPIO];                        // GPI Pins
+} sGPIOData;
+
 // Asset Data
 typedef struct sAssetData
 {
@@ -440,6 +492,9 @@ typedef struct sDataDescription
         sDeviceDescription*     DeviceDescription;
         sCameraDescription*     CameraDescription;
         sAssetDescription*      AssetDescription;
+        sIMUDescription*        IMUDescription;
+        sGPIODescription*       GPIODescription;
+        sAnchorDescription*     AnchorDescription;
     } Data;
 } sDataDescription;
 
@@ -502,6 +557,12 @@ typedef struct sFrameOfMocapData
 
     int32_t nDevices;                               // # of devices
     sDeviceData Devices[MAX_DEVICES];               // Device data
+
+    int32_t nIMU;                                   // # of IMU devices
+    sIMUData IMU[MAX_IMU];                          // IMU data
+
+    int32_t nGPIO;                                  // # of GPIO boards
+    sGPIOData GPIO[MAX_GPIO];                       // GPIO data
 
     uint32_t Timecode;                              // SMPTE timecode (if available)
     uint32_t TimecodeSubframe;                      // timecode sub-frame data

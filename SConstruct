@@ -30,11 +30,29 @@ Run the following command to download godot-cpp:
 
 env = SConscript("godot-cpp/SConstruct", {"env": env, "customs": customs})
 
-env.Append(CPPPATH=["src/", "include/"])
+env.Append(CPPPATH=["src/"])
 sources = Glob("src/*.cpp")
 
-env.Append(LIBS=["NatNetLib"])
-env.Append(LIBPATH=["lib/NatNet/"])
+# Both platforms share a single set of NatNet headers in include/. These are the
+# NatNet 4.5 headers, which are an append-only superset of the 4.4 headers: all
+# structs the plugin uses keep the same field offsets, and the 4.5 additions
+# (IMU/GPIO/Anchor) only append members. That makes them binary-compatible with
+# the Windows 4.4 runtime while still matching the shipped Linux 4.5 libNatNet.so.
+env.Append(CPPPATH=["include/"])
+
+# The NatNet SDK ships a different runtime binary per platform, so select the
+# matching link library based on the target platform.
+if env["platform"] == "linux":
+    # Ubuntu NatNet SDK (libNatNet.so).
+    env.Append(LIBS=["NatNet"])
+    env.Append(LIBPATH=["lib/NatNet/"])
+    # Let the loader find libNatNet.so sitting next to the plugin (addons/.../bin/)
+    # at runtime without requiring the user to set LD_LIBRARY_PATH.
+    env.Append(LINKFLAGS=["-Wl,-rpath,'$$ORIGIN'"])
+else:
+    # Windows NatNet SDK (NatNetLib.dll / NatNetLib.lib).
+    env.Append(LIBS=["NatNetLib"])
+    env.Append(LIBPATH=["lib/NatNet/"])
 
 if env["target"] in ["editor", "template_debug"]:
     try:
@@ -56,8 +74,17 @@ library = env.SharedLibrary(
 )
 
 
-# copy .dll files etc. into addons/ folder
-copy = env.Install("{}/addons/optitrack_plugin/{}/".format(projectdir, "bin"), library)
+# copy the compiled plugin binary into the addons/ folder
+addons_bin = "{}/addons/optitrack_plugin/{}/".format(projectdir, "bin")
+copy = env.Install(addons_bin, library)
 
 default_args = [library, copy]
+
+# On Linux, also stage the NatNet runtime library (libNatNet.so) alongside the
+# plugin so the shipped addon is self-contained. On Windows the equivalent
+# NatNetLib.dll is already present in the addons bin/ folder.
+if env["platform"] == "linux":
+    copy_natnet = env.Install(addons_bin, "lib/NatNet/libNatNet.so")
+    default_args.append(copy_natnet)
+
 Default(*default_args)
