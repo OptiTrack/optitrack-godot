@@ -1,3 +1,4 @@
+@tool
 extends MotiveClient
 
 var settings : OptiTrackSettings

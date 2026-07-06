@@ -7,7 +7,15 @@
 #include <godot_cpp/classes/engine.hpp>
 
 
-// This function registers the class's methods with the Godot engine so that 
+// Forward declaration of the NatNet frame callback, which is defined at the
+// bottom of this file. The constructor passes it to SetFrameReceivedCallback
+// below, so it needs a namespace-scope declaration here. The friend declaration
+// in motive_client.h isn't visible to ordinary name lookup; GCC enforces this,
+// while MSVC happens to accept the friend declaration alone.
+void NATNET_CALLCONV DataHandler(sFrameOfMocapData* data, void* pUserData);
+
+
+// This function registers the class's methods with the Godot engine so that
 // they can be accessed in GDScript
 void MotiveClient::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("is_connected_to_motive"), &MotiveClient::is_connected_to_motive);
